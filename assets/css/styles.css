@@ -4,59 +4,115 @@
   Email: clevercodes.yusuf@gmail.com
   Tech: Bootstrap 5 + Vanilla CSS
 
-  Design goals:
-  - Sleek, modern, minimal
-  - Strong typography, generous spacing
-  - Subtle motion (reveal on scroll)
-  - Accessible focus states
+  Design goals (revamped):
+  - Sleek, premium agency minimalism
+  - Elegant headings (Fraunces) + clean body (Inter)
+  - Consistent rhythm/spacing across pages
+  - Glass nav + soft gradient backgrounds
+  - Subtle motion + strong accessibility
 */
 
+/* ---------------------------
+   DESIGN TOKENS
+---------------------------- */
 :root{
-  /* Brand colors (picked from the provided logo) */
-  --tmm-primary: #4664E8;     /* vibrant blue */
-  --tmm-ink: #2C1B66;         /* deep indigo */
-  --tmm-text: #0f172a;        /* slate-900 */
-  --tmm-muted: #475569;       /* slate-600 */
+  /* Brand */
+  --tmm-primary: #4664E8;         /* blue */
+  --tmm-sky: #38BDF8;             /* skyblue accent */
+  --tmm-ink: #2C1B66;             /* deep indigo */
+  --tmm-text: #0f172a;            /* slate-900 */
+  --tmm-muted: #475569;           /* slate-600 */
   --tmm-border: rgba(15, 23, 42, 0.10);
 
+  /* Surfaces */
   --tmm-bg: #ffffff;
-  --tmm-soft: #f6f7ff;        /* very light indigo tint */
-  --tmm-radius: 18px;
+  --tmm-soft: #f6f7ff;
 
-  --shadow-sm: 0 8px 28px rgba(15, 23, 42, 0.07);
-  --shadow-md: 0 18px 55px rgba(15, 23, 42, 0.10);
+  /* Radius & shadow */
+  --tmm-radius: 18px;
+  --shadow-sm: 0 10px 28px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 22px 60px rgba(15, 23, 42, 0.12);
+
+  /* Typography */
+  --font-body: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", Times, serif;
+
+  /* Layout rhythm */
+  --container-max: 1140px;
+  --section-pad: 84px;
+  --section-pad-tight: 56px;
 }
 
+/* ---------------------------
+   BASE
+---------------------------- */
 html { scroll-behavior: smooth; }
 
 body{
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-body);
   color: var(--tmm-text);
   background: var(--tmm-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- Links & focus --- */
+img{ max-width: 100%; height: auto; }
+
 a{ color: inherit; text-decoration: none; }
 a:hover{ color: var(--tmm-primary); }
+
+.text-muted-2{ color: var(--tmm-muted) !important; }
 
 :focus-visible{
   outline: 3px solid rgba(70, 100, 232, 0.35);
   outline-offset: 3px;
   border-radius: 10px;
 }
+#heroRotateWord {
+  display: inline-block;
+  transition: opacity .35s ease, transform .35s ease;
+}
+#heroRotateWord.is-changing {
+  opacity: 0;
+  transform: translateY(6px);
+}
 
-/* --- Layout helpers --- */
+
+/* Better default paragraph rhythm */
+p{ line-height: 1.75; }
+
+/* ---------------------------
+   TYPOGRAPHY (elegant headings)
+---------------------------- */
+h1, h2, h3, .display-1, .display-2, .display-3, .display-4, .display-5, .display-6{
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.display-5{
+  line-height: 1.05;
+}
+
+.smallcaps{
+  font-variant-caps: all-small-caps;
+  letter-spacing: .16em;
+  color: rgba(15,23,42,.62);
+}
+
+/* ---------------------------
+   LAYOUT HELPERS
+---------------------------- */
 .section{
-  padding: 80px 0;
+  padding: var(--section-pad) 0;
 }
 
 .section--tight{
-  padding: 56px 0;
+  padding: var(--section-pad-tight) 0;
 }
 
-.text-muted-2{ color: var(--tmm-muted) !important; }
-
-/* --- Navbar (glass effect) --- */
+/* ---------------------------
+   NAVBAR (glass)
+---------------------------- */
 .navbar{
   transition: all .25s ease;
 }
@@ -72,11 +128,12 @@ a:hover{ color: var(--tmm-primary); }
   width: 40px;
   height: 40px;
   object-fit: contain;
+  border-radius: 10px;
 }
 
 .nav-link{
   color: rgba(15, 23, 42, 0.78);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .nav-link:hover{ color: var(--tmm-primary); }
@@ -98,11 +155,17 @@ a:hover{ color: var(--tmm-primary); }
   opacity: .75;
 }
 
-/* --- Buttons --- */
+/* ---------------------------
+   BUTTONS (pill, premium)
+---------------------------- */
 .btn{
   border-radius: 999px;
-  padding: .8rem 1.05rem;
-  font-weight: 600;
+  padding: .85rem 1.1rem;
+  font-weight: 700;
+}
+
+.btn-sm{
+  padding: .65rem 1rem;
 }
 
 .btn-primary{
@@ -122,30 +185,49 @@ a:hover{ color: var(--tmm-primary); }
   color: var(--tmm-ink);
 }
 
-/* --- Cards --- */
+/* Optional: a classy outline secondary for nav/footer chips */
+.btn-outline-soft{
+  border: 1px solid var(--tmm-border);
+  background: rgba(255,255,255,.6);
+}
+.btn-outline-soft:hover{
+  border-color: rgba(70, 100, 232, .35);
+  background: rgba(70, 100, 232, .06);
+}
+
+/* ---------------------------
+   CARDS (consistent + elegant)
+---------------------------- */
 .card{
   border: 1px solid var(--tmm-border);
   border-radius: var(--tmm-radius);
   box-shadow: none;
+  background: #fff;
 }
 
 .card.card--lift{
-  transition: transform .20s ease, box-shadow .20s ease;
-  background: #fff;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
 }
 
 .card.card--lift:hover{
   transform: translateY(-4px);
   box-shadow: var(--shadow-sm);
+  border-color: rgba(70, 100, 232, .22);
 }
 
+/* Icon chip used in contact cards */
 .icon-chip{
-  width: 44px; height: 44px;
+  width: 44px;
+  height: 44px;
   border-radius: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(70, 100, 232, 0.12);
+  background: linear-gradient(
+    180deg,
+    rgba(56, 189, 248, 0.14),
+    rgba(70, 100, 232, 0.10)
+  );
   border: 1px solid rgba(70, 100, 232, 0.22);
 }
 
@@ -154,66 +236,49 @@ a:hover{ color: var(--tmm-primary); }
   color: var(--tmm-ink);
 }
 
-/* --- Hero --- */
+/* ---------------------------
+   HERO (Home) + PAGE HERO (inner pages)
+---------------------------- */
 .hero{
   position: relative;
-  padding: 110px 0 70px;
+  padding: 120px 0 78px;
   overflow: hidden;
   background:
-    radial-gradient(1200px 600px at 10% 20%, rgba(70, 100, 232, 0.18), transparent 60%),
-    radial-gradient(900px 520px at 80% 30%, rgba(44, 27, 102, 0.16), transparent 60%),
+    radial-gradient(1200px 600px at 10% 20%, rgba(56, 189, 248, 0.22), transparent 60%),
+    radial-gradient(900px 520px at 80% 30%, rgba(70, 100, 232, 0.18), transparent 60%),
     linear-gradient(180deg, #fff, var(--tmm-soft));
-}
-
-.hero h1{
-  letter-spacing: -0.03em;
-  line-height: 1.05;
 }
 
 .hero .lead{
   color: rgba(15, 23, 42, 0.74);
 }
 
-.hero-badge{
-  display:inline-flex;
-  gap:.5rem;
-  align-items:center;
-  padding:.35rem .75rem;
-  border-radius: 999px;
-  border: 1px solid rgba(70, 100, 232, .22);
-  background: rgba(255,255,255,.65);
-  font-weight:600;
-  color: var(--tmm-ink);
-}
-
-.hero-shape{
-  position:absolute;
-  border-radius: 999px;
-  filter: blur(0px);
-  opacity: .55;
-  pointer-events:none;
-}
-.hero-shape.one{
-  width: 380px; height: 380px;
-  right: -140px; top: -120px;
-  background: radial-gradient(circle at 30% 30%, rgba(70, 100, 232, .35), transparent 60%);
-}
-.hero-shape.two{
-  width: 320px; height: 320px;
-  left: -140px; bottom: -180px;
-  background: radial-gradient(circle at 30% 30%, rgba(44, 27, 102, .28), transparent 60%);
-}
-
-/* --- Mini hero (inner pages) --- */
+/* Inner pages hero */
 .page-hero{
   padding: 110px 0 56px;
   background:
-    radial-gradient(900px 480px at 20% 10%, rgba(70, 100, 232, 0.16), transparent 60%),
+    radial-gradient(900px 480px at 20% 10%, rgba(56, 189, 248, 0.20), transparent 60%),
+    radial-gradient(900px 480px at 85% 0%, rgba(70, 100, 232, 0.16), transparent 60%),
     linear-gradient(180deg, #fff, var(--tmm-soft));
   border-bottom: 1px solid var(--tmm-border);
 }
 
-/* --- Lists --- */
+/* ---------------------------
+   TAGS / BADGES / LISTS
+---------------------------- */
+.tag{
+  display:inline-flex;
+  align-items:center;
+  padding:.28rem .6rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: .78rem;
+  border: 1px solid var(--tmm-border);
+  color: rgba(15,23,42,.76);
+  background: rgba(255,255,255,.7);
+}
+
+/* Checklist (if used on services/about) */
 .checklist{
   list-style: none;
   padding: 0;
@@ -224,32 +289,16 @@ a:hover{ color: var(--tmm-primary); }
   gap:.65rem;
   align-items:flex-start;
   padding: .55rem 0;
-  color: rgba(15,23,42,.82);
+  color: rgba(15,23,42,.84);
 }
 .checklist i{
   margin-top: .1rem;
   color: var(--tmm-primary);
 }
 
-/* --- Event tags --- */
-.tag{
-  display:inline-flex;
-  align-items:center;
-  padding:.25rem .55rem;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: .78rem;
-  border: 1px solid var(--tmm-border);
-  color: rgba(15,23,42,.75);
-  background: rgba(255,255,255,.7);
-}
-
-/* --- Footer --- */
-footer{
-  border-top: 1px solid var(--tmm-border);
-  background: #fff;
-}
-
+/* ---------------------------
+   SOCIAL ICON BUTTONS (footer/contact)
+---------------------------- */
 .social a{
   width: 42px;
   height: 42px;
@@ -259,15 +308,34 @@ footer{
   border-radius: 999px;
   border: 1px solid var(--tmm-border);
   color: rgba(15,23,42,.72);
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
 }
 
 .social a:hover{
   border-color: rgba(70, 100, 232, .35);
   background: rgba(70, 100, 232, .08);
   color: var(--tmm-ink);
+  transform: translateY(-2px);
 }
 
-/* --- Reveal on scroll (IntersectionObserver in main.js) --- */
+/* ---------------------------
+   FOOTER
+---------------------------- */
+footer{
+  border-top: 1px solid var(--tmm-border);
+  background: #fff;
+}
+
+.hr-soft{
+  border: none;
+  height: 1px;
+  background: var(--tmm-border);
+  margin: 1.5rem 0;
+}
+
+/* ---------------------------
+   REVEAL ANIMATION
+---------------------------- */
 .reveal{
   opacity: 0;
   transform: translateY(14px);
@@ -278,7 +346,9 @@ footer{
   transform: translateY(0);
 }
 
-/* --- Back to top button --- */
+/* ---------------------------
+   BACK TO TOP
+---------------------------- */
 #backToTop{
   position: fixed;
   right: 18px;
@@ -288,16 +358,11 @@ footer{
   box-shadow: var(--shadow-sm);
 }
 
-/* --- Small tweaks --- */
-.smallcaps{
-  font-variant-caps: all-small-caps;
-  letter-spacing: .12em;
-  color: rgba(15,23,42,.62);
-}
-
-.hr-soft{
-  border: none;
-  height: 1px;
-  background: var(--tmm-border);
-  margin: 1.5rem 0;
+/* ---------------------------
+   SMALL RESPONSIVE TWEAKS
+---------------------------- */
+@media (max-width: 991.98px){
+  .hero{ padding: 96px 0 60px; }
+  .page-hero{ padding: 92px 0 48px; }
+  .section{ padding: 68px 0; }
 }

@@ -3,10 +3,11 @@
   - Navbar behavior (glass + shrink)
   - Active nav link based on data-page attr
   - Reveal-on-scroll animation
+  - Events: single source of truth (Home preview + events.html grid)
   - Events filtering + render (events.html)
+  - Home: events preview render (index.html)
+  - Home: dynamic headline rotating word
   - Back-to-top button
-
-  Keep it vanilla: fewer dependencies, easier maintenance.
 */
 
 (function () {
@@ -33,15 +34,25 @@
   const pageKey = document.body?.dataset?.page;
   if (pageKey) {
     $$("[data-nav]").forEach((link) => {
-      link.classList.toggle("active", link.dataset.nav === pageKey);
-      link.setAttribute("aria-current", link.dataset.nav === pageKey ? "page" : "false");
+      const isActive = link.dataset.nav === pageKey;
+      link.classList.toggle("active", isActive);
+      if (isActive) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
     });
   }
 
   // ---------- Reveal on scroll ----------
+  // NOTE: We keep this + add a small helper to reveal injected content too.
   const revealEls = $$(".reveal");
+  let revealObserver = null;
+
+  const revealNow = (root = document) => {
+    // For injected HTML (events cards), we force reveal.
+    $$(".reveal", root).forEach((el) => el.classList.add("is-visible"));
+  };
+
   if ("IntersectionObserver" in window && revealEls.length) {
-    const io = new IntersectionObserver(
+    revealObserver = new IntersectionObserver(
       (entries, obs) => {
         entries.forEach((e) => {
           if (!e.isIntersecting) return;
@@ -51,9 +62,9 @@
       },
       { threshold: 0.12 }
     );
-    revealEls.forEach((el) => io.observe(el));
+    revealEls.forEach((el) => revealObserver.observe(el));
   } else {
-    revealEls.forEach((el) => el.classList.add("is-visible"));
+    revealNow(document);
   }
 
   // ---------- Back to top ----------
@@ -65,27 +76,24 @@
   window.addEventListener("scroll", toggleBackToTop, { passive: true });
   toggleBackToTop();
 
-  // ---------- Events page: render + filter ----------
-  // Only runs if we find #eventsGrid on the page.
-  const eventsGrid = $("#eventsGrid");
-  const filterWrap = $("#eventFilters");
+  // ============================================================
+  // EVENTS: Single source of truth
+  // - Used on events.html (grid + filters)
+  // - Used on index.html (3-card preview)
+  // ============================================================
 
+  /**
+   * Tip: Add "status" so we can show Upcoming/Past if you want later.
+   * For now we keep your original fields to avoid breaking anything.
+   */
   const eventsData = [
     {
-      title: "Ramadan Souq",
-      date: "Seasonal",
+      title: "TMM Summit",
+      date: "Annual",
       location: "Maiduguri, Borno",
-      tag: "Community",
+      tag: "Conference",
       desc:
-        "A curated marketplace experience that brings vendors, families, and communities together during Ramadan.",
-    },
-    {
-      title: "End-of-Year Market Sales",
-      date: "Q4 (Annual)",
-      location: "Maiduguri, Borno",
-      tag: "Marketplace",
-      desc:
-        "A sales-driven activation to boost visibility for vendors and help customers discover standout brands.",
+        "An annual conference bringing together industry leaders, innovators, and stakeholders to discuss trends and strategies."
     },
     {
       title: "Funfair Activation",
@@ -93,7 +101,7 @@
       location: "Maiduguri, Borno",
       tag: "Experiential",
       desc:
-        "High-energy brand experiences—music, games, pop-ups—designed to create memorable brand moments.",
+        "High-energy brand experiences—music, games, pop-ups—designed to create memorable brand moments."
     },
     {
       title: "Social Media Exclusives",
@@ -101,52 +109,87 @@
       location: "Digital",
       tag: "Digital",
       desc:
-        "Online-first campaigns that keep brands top-of-mind and drive engagement across social platforms.",
+        "Online-first campaigns that keep brands top-of-mind and drive engagement across social platforms."
     },
+    {
+      title: "TMM Webinar Series",
+      date: "Always-on",
+      location: "Hybrid",
+      tag: "Webinar",
+      desc:
+        "Live sessions and practical learning for business owners, creators, and brand builders."
+    }
   ];
+
+  // Expose globally (optional, useful for debugging or future pages)
+  window.TMM_EVENTS = eventsData;
+
+  // ---------- Shared card renderer ----------
+  const eventCard = (ev) => `
+    <div class="col-md-6 col-lg-4 reveal">
+      <div class="card card--lift h-100">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+              <span class="tag mb-3">${ev.tag}</span>
+              <h3 class="h5 mb-2">${ev.title}</h3>
+              <p class="text-muted-2 mb-3">${ev.desc}</p>
+            </div>
+            <div class="icon-chip flex-shrink-0" aria-hidden="true">
+              <i class="bi bi-calendar-event"></i>
+            </div>
+          </div>
+          <div class="d-flex flex-wrap gap-2 text-muted-2 small">
+            <span><i class="bi bi-clock me-1"></i>${ev.date}</span>
+            <span class="mx-1">•</span>
+            <span><i class="bi bi-geo-alt me-1"></i>${ev.location}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // ---------- Home page: Events preview (must exist: #homeEventsGrid) ----------
+  const homeEventsGrid = $("#homeEventsGrid");
+  const renderHomeEvents = () => {
+    if (!homeEventsGrid) return;
+
+    // Strategy:
+    // - If you later add status, we can show Upcoming first.
+    // - For now: show first 3 items.
+    const top = eventsData.slice(0, 3);
+
+    homeEventsGrid.innerHTML = top.map(eventCard).join("");
+
+    // Since these are injected, mark them visible immediately.
+    revealNow(homeEventsGrid);
+  };
+
+  // ---------- Events page: render + filter ----------
+  // Only runs if we find #eventsGrid on the page.
+  const eventsGrid = $("#eventsGrid");
+  const filterWrap = $("#eventFilters");
 
   const renderEvents = (items) => {
     if (!eventsGrid) return;
-    eventsGrid.innerHTML = items
-      .map(
-        (ev) => `
-        <div class="col-md-6 col-lg-4 reveal">
-          <div class="card card--lift h-100">
-            <div class="card-body p-4">
-              <div class="d-flex justify-content-between align-items-start gap-3">
-                <div>
-                  <span class="tag mb-3">${ev.tag}</span>
-                  <h3 class="h5 mb-2">${ev.title}</h3>
-                  <p class="text-muted-2 mb-3">${ev.desc}</p>
-                </div>
-                <div class="icon-chip flex-shrink-0" aria-hidden="true">
-                  <i class="bi bi-calendar-event"></i>
-                </div>
-              </div>
-              <div class="d-flex flex-wrap gap-2 text-muted-2 small">
-                <span><i class="bi bi-clock me-1"></i>${ev.date}</span>
-                <span class="mx-1">•</span>
-                <span><i class="bi bi-geo-alt me-1"></i>${ev.location}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      `
-      )
-      .join("");
 
-    // Re-attach reveal observer for newly injected elements
-    $$(".reveal", eventsGrid).forEach((el) => el.classList.add("is-visible"));
+    eventsGrid.innerHTML = items.map(eventCard).join("");
+
+    // injected => reveal immediately
+    revealNow(eventsGrid);
   };
 
   const uniqueTags = () => {
-    const tags = new Set(eventsData.map((e) => e.tag));
-    return ["All", ...tags];
+    // Normalize tags a bit (avoid duplicates due to typos/case differences)
+    const tags = new Set(eventsData.map((e) => (e.tag || "").trim()));
+    return ["All", ...tags].filter(Boolean);
   };
 
   const renderFilters = () => {
     if (!filterWrap) return;
-    filterWrap.innerHTML = uniqueTags()
+
+    const tags = uniqueTags();
+    filterWrap.innerHTML = tags
       .map(
         (tag, idx) => `
         <button 
@@ -170,7 +213,9 @@
       });
 
       const tag = btn.dataset.filter;
-      const filtered = tag === "All" ? eventsData : eventsData.filter((x) => x.tag === tag);
+      const filtered =
+        tag === "All" ? eventsData : eventsData.filter((x) => x.tag === tag);
+
       renderEvents(filtered);
     });
   };
@@ -179,5 +224,44 @@
     renderFilters();
     renderEvents(eventsData);
   }
+
+  // ============================================================
+  // HOME: Dynamic headline rotating phrase
+  // Requirement: "Ideas that move markets" -> rotate 3 phrases
+  // ============================================================
+  const initHeroRotator = () => {
+    // Works with your existing HTML if you add:
+    // <span id="heroRotateWord" data-rotate='["move markets","build trust","drive growth"]'>move markets</span>
+    const el = $("#heroRotateWord");
+    if (!el) return;
+
+    let items = [];
+    try {
+      items = JSON.parse(el.getAttribute("data-rotate") || "[]");
+    } catch (err) {
+      items = [];
+    }
+    if (!items.length) return;
+
+    const interval = parseInt(el.getAttribute("data-interval") || "2400", 10);
+    let index = 0;
+
+    const swap = () => {
+      index = (index + 1) % items.length;
+
+      // smooth fade down/up (CSS class already used in my suggestion)
+      el.classList.add("is-changing");
+      setTimeout(() => {
+        el.textContent = items[index];
+        el.classList.remove("is-changing");
+      }, 220);
+    };
+
+    setInterval(swap, interval);
+  };
+
+  // Run page-level renders
+  renderHomeEvents();
+  initHeroRotator();
 
 })();
