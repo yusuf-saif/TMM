@@ -55,15 +55,15 @@ Upload the contents of the tmm-site/ directory to your hosting root (usually pub
 
 ## Configuration
 
-# Contact Information
+### Contact Information
 
 Edit phone numbers, email address, physical address, and Google Maps embed URL directly in contact.html.
 
-# Social Media Links
+### Social Media Links
 
 Update all social media URLs in the footer and contact sections to reflect the correct handles.
 
-# Events Management
+### Events Management
 
 All events are managed from a single data source to keep the Home page and Events page in sync.
 
@@ -93,13 +93,13 @@ Recommended tag values: Conference, Experiential, Community, Marketplace, Digita
 
 The Home page hero headline includes rotating text controlled via data attributes in index.html. The phrases and rotation speed can be changed by editing the data-rotate and data-interval values on the hero text element.
 
-# Styling & Branding
+### Styling & Branding
 
 Global styles are defined in assets/css/styles.css. Brand colors, spacing, typography, and reusable components are centralized using CSS variables under the :root selector. Updating colors or typography in this file will update the entire site.
 
 The site logo is located at assets/img/logo.jpg. Replace this file to update the logo without modifying HTML.
 
-# Accessibility & UX
+### Accessibility & UX
 
 The site uses semantic HTML, accessible navigation, keyboard-friendly interactions, skip-to-content support, and subtle motion effects for a polished and inclusive user experience.
 
