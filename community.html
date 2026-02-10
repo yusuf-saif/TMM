@@ -1,36 +1,107 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <!-- Responsive meta -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <meta name="theme-color" content="#4664E8">
-  <meta name="description" content="The Market Masters (TMM) — branding and marketing agency in Maiduguri, Borno State, Nigeria. We craft innovative ideas, campaigns, and digital experiences that help brands resonate authentically.">
+  <meta name="description" content="Join the TMM community — a safe haven for vendors and business owners to collaborate, learn, and access opportunities.">
   <title>Join our Community — The Market Masters (TMM)</title>
 
-  <!-- Favicon (replace with your .ico if needed) -->
+  <!-- Favicon -->
   <link rel="icon" href="assets/img/logo.jpg">
 
-  <!-- Google Font -->
+  <!-- Fonts (classy pairing: Fraunces for headings + Inter for body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous">
 
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-  <!-- Custom styles -->
+  <!-- Site styles -->
   <link rel="stylesheet" href="assets/css/styles.css">
+
+  <!-- Page-only styles for the wizard (kept minimal, responsive, accessible) -->
+  <style>
+    /* ---------------------------
+      COMMUNITY WIZARD (UI polish)
+      - Lightweight CSS only for this page
+      - Modal already uses Bootstrap, we just refine the wizard UX
+    ----------------------------*/
+
+    /* Step pills (visual overview of steps) */
+    .wizard-steps { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .wizard-pill{
+      padding:.25rem .6rem;
+      border:1px solid var(--tmm-border);
+      border-radius:999px;
+      font-size:.8rem;
+      font-weight:700;
+      color: rgba(15,23,42,.75);
+      background: rgba(255,255,255,.7);
+      user-select:none;
+      white-space: nowrap;
+    }
+    .wizard-pill.active{
+      background: rgba(70,100,232,.10);
+      border-color: rgba(70,100,232,.30);
+      color: var(--tmm-ink);
+    }
+
+    /* Show one step at a time */
+    .wizard-step { display:none; }
+    .wizard-step.active { display:block; }
+
+    /* Field error text */
+    .field-error{ color:#b42318; font-size:.85rem; margin-top:.35rem; }
+
+    /* Modal shape to match your design system */
+    .modal-content{
+      border-radius: var(--tmm-radius);
+      overflow:hidden;
+    }
+    .modal-header, .modal-footer{
+      border-color: var(--tmm-border) !important;
+    }
+
+    /* Gentle modal animation (respects reduced motion) */
+    @media (prefers-reduced-motion: no-preference) {
+      .modal.fade .modal-dialog {
+        transform: translateY(12px) scale(.98);
+        transition: transform .25s ease, opacity .25s ease;
+      }
+      .modal.show .modal-dialog {
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Small screens: nicer spacing, avoid edge-to-edge */
+    @media (max-width: 575.98px){
+      .modal-dialog{ margin: .75rem; }
+      .modal-body{ padding: 1rem !important; }
+    }
+
+    .form-note{ font-size:.92rem; color: rgba(15,23,42,.72); line-height:1.6; }
+  </style>
 </head>
 
 <body data-page="community">
-  <!-- Skip link for accessibility -->
+  <!-- Accessibility: skip to content -->
   <a class="visually-hidden-focusable position-absolute top-0 start-0 p-3 bg-white border rounded-3 m-2" href="#main">
     Skip to content
   </a>
 
+  <!-- NAV (same structure as your other pages) -->
   <nav class="navbar navbar-expand-lg navbar-light glass py-3 sticky-top">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
@@ -38,7 +109,8 @@
         <span class="fw-bold">The Market Masters</span>
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navTmm" aria-controls="navTmm" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navTmm"
+              aria-controls="navTmm" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -51,8 +123,7 @@
           <li class="nav-item"><a class="nav-link" data-nav="contact" href="contact.html">Contact</a></li>
           <li class="nav-item ms-lg-2">
             <a class="btn btn-primary btn-sm" data-nav="community" href="community.html">
-              Join our Community
-              <i class="bi bi-arrow-up-right ms-1"></i>
+              Join our Community <i class="bi bi-arrow-up-right ms-1"></i>
             </a>
           </li>
         </ul>
@@ -60,103 +131,517 @@
     </div>
   </nav>
 
+  <main id="main">
+    <!-- HERO -->
+    <header class="page-hero">
+      <div class="container">
+        <div class="row align-items-end gy-3">
+          <div class="col-lg-8">
+            <div class="smallcaps reveal">Community</div>
+            <h1 class="display-5 fw-bold mb-2 reveal">Join a network built for growth & visibility.</h1>
+            <p class="lead mb-0 reveal">
+              A safe haven for vendors and business owners to collaborate, learn, and access opportunities.
+            </p>
+          </div>
 
-<main id="main">
-  <header class="page-hero">
-    <div class="container">
-      <div class="row align-items-end gy-3">
-        <div class="col-lg-8">
-          <div class="smallcaps reveal">Community</div>
-          <h1 class="display-5 fw-bold mb-2 reveal">Join a network built for growth & visibility.</h1>
-          <p class="lead mb-0 reveal">
-            A safe haven for vendors and business owners to collaborate, learn, and access opportunities.
-          </p>
-        </div>
-        <div class="col-lg-4 text-lg-end reveal">
-          <!-- Replace with your real Google Form link -->
-          <a class="btn btn-primary" href="https://forms.gle/REPLACE_WITH_YOUR_FORM_LINK" target="_blank" rel="noreferrer">
-            Open Google Form <i class="bi bi-arrow-up-right ms-1"></i>
-          </a>
-          <div class="text-muted-2 small mt-2">
-            (Replace the link in <code>community.html</code>)
+          <div class="col-lg-4 text-lg-end reveal">
+            <!-- CTA triggers the wizard modal -->
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#joinCommunityModal"
+              aria-describedby="joinHelpText">
+              Start Registration <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+            <div id="joinHelpText" class="text-muted-2 small mt-2">
+              Takes about 2–3 minutes. You’ll receive a welcome email + WhatsApp link after submitting.
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <section class="section">
-    <div class="container">
-      <div class="row gy-4">
-        <div class="col-lg-6 reveal">
-          <h2 class="fw-bold mb-3">Why this community exists</h2>
-          <p class="text-muted-2">
-            We’re building an ecosystem where businesses don’t just “market” — they build real relationships, learn best practices,
-            and grow sustainably. It’s a space designed to promote ethical, legal, and socially conscious business practices.
-          </p>
+    <!-- CONTENT -->
+    <section class="section">
+      <div class="container">
+        <div class="row gy-4">
+          <div class="col-lg-6 reveal">
+            <h2 class="fw-bold mb-3">Why this community exists</h2>
+            <p class="text-muted-2">
+              We’re building an ecosystem where businesses don’t just “market” — they build real relationships, learn best practices,
+              and grow sustainably. It’s a space designed to promote ethical, legal, and socially conscious business practices.
+            </p>
 
-          <div class="mt-4">
-            <div class="smallcaps mb-2">Benefits</div>
-            <ul class="checklist">
-              <li><i class="bi bi-check-circle-fill"></i> Visibility through community activations & events</li>
-              <li><i class="bi bi-check-circle-fill"></i> Networking with vendors, partners, and collaborators</li>
-              <li><i class="bi bi-check-circle-fill"></i> Learning opportunities (workshops, strategy sessions)</li>
-              <li><i class="bi bi-check-circle-fill"></i> Access to announcements, openings, and collaboration calls</li>
-            </ul>
-          </div>
+            <div class="mt-4">
+              <div class="smallcaps mb-2">Benefits</div>
+              <ul class="checklist">
+                <li><i class="bi bi-check-circle-fill"></i> Visibility through community activations & events</li>
+                <li><i class="bi bi-check-circle-fill"></i> Networking with vendors, partners, and collaborators</li>
+                <li><i class="bi bi-check-circle-fill"></i> Learning opportunities (workshops, strategy sessions)</li>
+                <li><i class="bi bi-check-circle-fill"></i> Access to announcements, openings, and collaboration calls</li>
+              </ul>
+            </div>
 
-          <div class="d-flex flex-wrap gap-2 mt-4">
-            <a class="btn btn-primary" href="https://forms.gle/REPLACE_WITH_YOUR_FORM_LINK" target="_blank" rel="noreferrer">
-              Join via Google Form <i class="bi bi-arrow-up-right ms-1"></i>
-            </a>
-            <a class="btn btn-outline-primary" href="events.html">See events</a>
-          </div>
-        </div>
-
-        <div class="col-lg-6 reveal">
-          <div class="card card--lift">
-            <div class="card-body p-4 p-lg-5">
-              <div class="smallcaps">Quick steps</div>
-              <h3 class="h4 fw-bold mt-2">How to join</h3>
-              <ol class="text-muted-2 mb-4">
-                <li>Open the community form.</li>
-                <li>Fill in your business details and what you do.</li>
-                <li>Submit — we’ll reach out with the next steps.</li>
-              </ol>
-
-              <div class="p-3 rounded-4" style="background: rgba(70,100,232,.08); border: 1px solid rgba(70,100,232,.18);">
-                <div class="fw-bold">Tip</div>
-                <div class="text-muted-2 small">
-                  Add your best Instagram/website link in the form so we can quickly review your brand.
-                </div>
-              </div>
-
-              <div class="mt-4">
-                <a class="btn btn-primary w-100" href="https://forms.gle/REPLACE_WITH_YOUR_FORM_LINK" target="_blank" rel="noreferrer">
-                  Open the form <i class="bi bi-arrow-up-right ms-1"></i>
-                </a>
-              </div>
-
-              <div class="text-muted-2 small mt-3">
-                Want to partner or sponsor an activation? <a href="contact.html">Contact us</a>.
-              </div>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+              <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#joinCommunityModal">
+                Join now <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+              <a class="btn btn-outline-primary" href="events.html">See events</a>
             </div>
           </div>
 
-          <div class="mt-3 text-muted-2 small">
-            Optional: you can embed the Google Form directly on this page (recommended only if the form is short).
+          <div class="col-lg-6 reveal">
+            <div class="card card--lift">
+              <div class="card-body p-4 p-lg-5">
+                <div class="smallcaps">Quick steps</div>
+                <h3 class="h4 fw-bold mt-2">How to join</h3>
+                <ol class="text-muted-2 mb-4">
+                  <li>Click “Start registration”.</li>
+                  <li>Fill in your details in the step-by-step form.</li>
+                  <li>Submit — check your email for the welcome message and WhatsApp link.</li>
+                </ol>
+
+                <div class="p-3 rounded-4" style="background: rgba(70,100,232,.08); border: 1px solid rgba(70,100,232,.18);">
+                  <div class="fw-bold">Tip</div>
+                  <div class="text-muted-2 small">
+                    Add your business Instagram/website link so we can quickly review your brand.
+                  </div>
+                </div>
+
+                <div class="mt-4">
+                  <button class="btn btn-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#joinCommunityModal">
+                    Start registration <i class="bi bi-arrow-right ms-1"></i>
+                  </button>
+                </div>
+
+                <div class="text-muted-2 small mt-3">
+                  Want to partner or sponsor an activation? <a href="contact.html">Contact us</a>.
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3 text-muted-2 small">
+              This form is built into the website (no Google Form). Submissions go to Google Sheets via Apps Script.
+            </div>
           </div>
-          <!-- Example embed (commented out):
-          <div class="ratio ratio-4x3 rounded-4 overflow-hidden border mt-2">
-            <iframe title="Community form" src="https://docs.google.com/forms/d/e/FORM_ID/viewform?embedded=true">Loading…</iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       JOIN COMMUNITY MODAL — Multi-step wizard (responsive + accessible)
+       ========================================================= -->
+  <div class="modal fade" id="joinCommunityModal" tabindex="-1" aria-labelledby="joinCommunityTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <div class="smallcaps mb-1">Join our community</div>
+            <h2 class="h4 fw-bold mb-0" id="joinCommunityTitle">Entrepreneur Information</h2>
           </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close registration form"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Step pills + status (ARIA live for screen readers) -->
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-3 align-items-md-center mb-3">
+            <div class="wizard-steps" id="wizardPills" aria-label="Form steps">
+              <span class="wizard-pill active" data-step-pill="1">1. Personal</span>
+              <span class="wizard-pill" data-step-pill="2">2. Business</span>
+              <span class="wizard-pill" data-step-pill="3">3. Operations</span>
+              <span class="wizard-pill" data-step-pill="4">4. Needs</span>
+              <span class="wizard-pill" data-step-pill="5">5. Goals</span>
+              <span class="wizard-pill" data-step-pill="6">6. Consent</span>
+            </div>
+
+            <div class="text-muted-2 small" aria-live="polite" aria-atomic="true">
+              <span id="wizardStepLabel">Step 1 of 6</span>
+            </div>
+          </div>
+
+          <!-- Progress bar uses Bootstrap styles -->
+          <div class="progress mb-4" role="progressbar" aria-label="Form progress" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar" id="wizardProgress" style="width: 16.6%"></div>
+          </div>
+
+          <div class="form-note mb-3">
+            After submitting, you’ll get a welcome email with the WhatsApp community link.
+          </div>
+
+          <!--
+            IMPORTANT:
+            - We do NOT post a classic <form action> because we want a smooth wizard UX.
+            - We send data to Apps Script via fetch() in "text/plain" mode to avoid CORS preflight issues.
           -->
+          <form id="communityWizardForm" novalidate>
+            <!-- Honeypot anti-bot field (hidden from users) -->
+            <input type="text" name="website" id="hpWebsite" class="d-none" autocomplete="off" tabindex="-1" aria-hidden="true">
+
+            <!-- STEP 1: Personal -->
+            <section class="wizard-step active" data-step="1" aria-label="Personal details">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="fullName">Full Name</label>
+                  <input id="fullName" class="form-control form-control-lg" name="fullName" required placeholder="e.g., Aisha Mohammed" autocomplete="name">
+                  <div class="field-error d-none" data-error-for="fullName"></div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label" for="phone">Phone Number (WhatsApp preferred)</label>
+                  <input id="phone" class="form-control form-control-lg" name="phone" required placeholder="+234..." inputmode="tel" autocomplete="tel">
+                  <div class="field-error d-none" data-error-for="phone"></div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label" for="email">Email Address</label>
+                  <input id="email" class="form-control form-control-lg" name="email" type="email" required placeholder="you@email.com" autocomplete="email">
+                  <div class="field-error d-none" data-error-for="email"></div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label" for="location">Location</label>
+                  <input id="location" class="form-control form-control-lg" name="location" required placeholder="Maiduguri, Borno" autocomplete="address-level2">
+                  <div class="field-error d-none" data-error-for="location"></div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" for="ageRange">Age Range (optional)</label>
+                  <select id="ageRange" class="form-select form-select-lg" name="ageRange">
+                    <option value="" selected>Prefer not to say</option>
+                    <option>18–25</option>
+                    <option>26–35</option>
+                    <option>36–45</option>
+                    <option>46+</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            <!-- STEP 2: Business info -->
+            <section class="wizard-step" data-step="2" aria-label="Business information">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="businessName">Business Name</label>
+                  <input id="businessName" class="form-control form-control-lg" name="businessName" required placeholder="Your business name">
+                  <div class="field-error d-none" data-error-for="businessName"></div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label" for="industry">Business Type / Industry</label>
+                  <input id="industry" class="form-control form-control-lg" name="industry" required placeholder="Food, Fashion, Tech, Services...">
+                  <div class="field-error d-none" data-error-for="industry"></div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label" for="businessStage">How long has your business been operating?</label>
+                  <select id="businessStage" class="form-select form-select-lg" name="businessStage" required>
+                    <option value="" selected disabled>Select one</option>
+                    <option>Idea stage</option>
+                    <option>Less than 1 year</option>
+                    <option>1–3 years</option>
+                    <option>3+ years</option>
+                  </select>
+                  <div class="field-error d-none" data-error-for="businessStage"></div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label" for="registered">Business Registration Status</label>
+                  <select id="registered" class="form-select form-select-lg" name="registered" required>
+                    <option value="" selected disabled>Select one</option>
+                    <option>Registered</option>
+                    <option>Not registered</option>
+                  </select>
+                  <div class="field-error d-none" data-error-for="registered"></div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" for="businessLink">Business Instagram / Website (optional)</label>
+                  <input id="businessLink" class="form-control form-control-lg" name="businessLink" placeholder="https://instagram.com/... or https://..." inputmode="url">
+                </div>
+              </div>
+            </section>
+
+            <!-- STEP 3: Operations -->
+            <section class="wizard-step" data-step="3" aria-label="Business operations">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="staffCount">Number of staff (if any)</label>
+                  <input id="staffCount" class="form-control form-control-lg" name="staffCount" type="number" min="0" placeholder="0" inputmode="numeric">
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label" for="operationMode">Do you operate:</label>
+                  <select id="operationMode" class="form-select form-select-lg" name="operationMode" required>
+                    <option value="" selected disabled>Select one</option>
+                    <option>Online</option>
+                    <option>Physical location</option>
+                    <option>Both</option>
+                  </select>
+                  <div class="field-error d-none" data-error-for="operationMode"></div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" for="offerings">What products or services do you offer?</label>
+                  <textarea id="offerings" class="form-control form-control-lg" name="offerings" rows="4" required placeholder="Describe what you sell or offer..."></textarea>
+                  <div class="field-error d-none" data-error-for="offerings"></div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" for="revenueRange">Monthly revenue range (optional)</label>
+                  <select id="revenueRange" class="form-select form-select-lg" name="revenueRange">
+                    <option value="" selected>Prefer not to say</option>
+                    <option>Below ₦100k</option>
+                    <option>₦100k – ₦300k</option>
+                    <option>₦300k – ₦700k</option>
+                    <option>₦700k – ₦1.5m</option>
+                    <option>₦1.5m+</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            <!-- STEP 4: Needs -->
+            <section class="wizard-step" data-step="4" aria-label="Challenges and support needs">
+              <div class="row g-3">
+                <div class="col-12">
+                  <fieldset class="mb-0">
+                    <legend class="form-label mb-2">What are your biggest business challenges? (select all that apply)</legend>
+                    <div class="row g-2">
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="challenges" value="Sales & marketing">
+                          <span class="form-check-label">Sales & marketing</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="challenges" value="Funding / capital">
+                          <span class="form-check-label">Funding / capital</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="challenges" value="Branding">
+                          <span class="form-check-label">Branding</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="challenges" value="Operations">
+                          <span class="form-check-label">Operations</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="challenges" value="Management">
+                          <span class="form-check-label">Management</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="challenges" value="Other">
+                          <span class="form-check-label">Other</span>
+                        </label>
+                      </div>
+                    </div>
+                  </fieldset>
+
+                  <div class="mt-2">
+                    <label class="form-label" for="challengesOther">If “Other”, specify (optional)</label>
+                    <input id="challengesOther" class="form-control form-control-lg" name="challengesOther" placeholder="Type here...">
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <fieldset class="mb-0">
+                    <legend class="form-label mb-2">What kind of support are you looking for? (select all that apply)</legend>
+                    <div class="row g-2">
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="support" value="Coaching / Mentorship">
+                          <span class="form-check-label">Coaching / Mentorship</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="support" value="Business training">
+                          <span class="form-check-label">Business training</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="support" value="One-on-one consultation">
+                          <span class="form-check-label">One-on-one consultation</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="support" value="Networking opportunities">
+                          <span class="form-check-label">Networking opportunities</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-check">
+                          <input class="form-check-input" type="checkbox" name="support" value="Access to funding information">
+                          <span class="form-check-label">Access to funding information</span>
+                        </label>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" for="supportFormat">Preferred support format (optional)</label>
+                  <select id="supportFormat" class="form-select form-select-lg" name="supportFormat">
+                    <option value="" selected>Choose one (optional)</option>
+                    <option>WhatsApp only</option>
+                    <option>WhatsApp + Monthly training</option>
+                    <option>1:1 sessions when needed</option>
+                    <option>Events / meetups</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            <!-- STEP 5: Goals -->
+            <section class="wizard-step" data-step="5" aria-label="Business goals">
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label" for="goals">What are your business goals for the next 6–12 months?</label>
+                  <textarea id="goals" class="form-control form-control-lg" name="goals" rows="5" required
+                            placeholder="e.g., increase monthly sales by 30%, launch a new product, hire staff, expand online..."></textarea>
+                  <div class="field-error d-none" data-error-for="goals"></div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" for="successDefinition">What would success look like for you? (optional)</label>
+                  <input id="successDefinition" class="form-control form-control-lg" name="successDefinition" placeholder="Short answer...">
+                </div>
+              </div>
+            </section>
+
+            <!-- STEP 6: Additional info + consent -->
+            <section class="wizard-step" data-step="6" aria-label="Additional info and consent">
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label" for="referralSource">How did you hear about us?</label>
+                  <select id="referralSource" class="form-select form-select-lg" name="referralSource" required>
+                    <option value="" selected disabled>Select one</option>
+                    <option>Social media</option>
+                    <option>Referral</option>
+                    <option>Event</option>
+                    <option>Other</option>
+                  </select>
+                  <div class="field-error d-none" data-error-for="referralSource"></div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" for="comments">Any additional comments or expectations? (optional)</label>
+                  <textarea id="comments" class="form-control form-control-lg" name="comments" rows="4" placeholder="Type here..."></textarea>
+                </div>
+
+                <div class="col-12">
+                  <div class="card" style="border-style: dashed;">
+                    <div class="card-body p-3">
+                      <label class="form-check">
+                        <input class="form-check-input" type="checkbox" name="consent" value="Yes" required>
+                        <span class="form-check-label">
+                          I agree to be contacted for business support, coaching, and related opportunities.
+                        </span>
+                      </label>
+                      <div class="field-error d-none" data-error-for="consent"></div>
+
+                      <div class="text-muted-2 small mt-2">
+                        By submitting, you consent to receiving onboarding details and updates from TMM.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="text-muted-2 small">
+                    After submitting, check your email for the welcome message and WhatsApp group link.
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Wizard controls -->
+            <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4">
+              <button type="button" class="btn btn-outline-primary" id="wizPrev" disabled>
+                <i class="bi bi-arrow-left me-1"></i> Back
+              </button>
+
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-primary" id="wizNext">
+                  Next <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+
+                <button type="submit" class="btn btn-primary d-none" id="wizSubmit">
+                  Submit <i class="bi bi-send ms-1"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Status messages (ARIA-friendly) -->
+            <div class="mt-3">
+              <div class="text-muted-2 small d-none" id="wizLoading" aria-live="polite">Submitting... please wait.</div>
+
+              <div class="alert alert-success d-none" id="wizSuccess" role="status">
+                <strong>Submitted!</strong> Check your email for the welcome message and WhatsApp link.
+              </div>
+
+              <div class="alert alert-danger d-none" id="wizError" role="alert">
+                <strong>Oops.</strong> Something went wrong. Please try again.
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <div class="text-muted-2 small">
+            Powered by TMM • Your data is used only for onboarding and community support.
+          </div>
         </div>
       </div>
     </div>
-  </section>
-</main>
+  </div>
 
+  <!-- ✅ ADD THIS (Congrats Modal) — place it anywhere before </body> (best: near your Join modal) -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <div class="smallcaps mb-1">Registration complete</div>
+          <h2 class="h4 fw-bold mb-0" id="successTitle">Congrats 🎉</h2>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close success message"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="mb-2">
+          Thank you for joining <strong>The Market Masters (TMM) Community</strong>.
+        </p>
+        <p class="text-muted-2 mb-0">
+          Please check your email for next steps and your WhatsApp community link.
+          <span class="d-block mt-2 small text-muted-2">
+            (If you don’t see it, check Spam/Promotions.)
+          </span>
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+          Got it <i class="bi bi-check2 ms-1"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- FOOTER (same style as your other pages) -->
   <footer class="py-5">
     <div class="container">
       <div class="row gy-4 align-items-start">
@@ -229,20 +714,294 @@
     </div>
   </footer>
 
-  <!-- Back to top -->
-  <button id="backToTop" class="btn btn-primary" type="button" aria-label="Back to top" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+  <!-- Back to top (your global JS handles visibility) -->
+  <button id="backToTop" class="btn btn-primary" type="button" aria-label="Back to top"
+          onclick="window.scrollTo({top:0, behavior:'smooth'})">
     <i class="bi bi-arrow-up"></i>
   </button>
 
-  <!-- Bootstrap bundle (Popper included) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <!-- Bootstrap bundle (includes Popper) -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
 
-  <!-- Site JS -->
+  <!-- Site JS (active nav, reveal, back-to-top, etc.) -->
   <script src="assets/js/main.js"></script>
+
   <script>
-    // Tiny utility: keep footer year current without touching HTML yearly.
+    // Keep footer year current
     document.getElementById('yearNow').textContent = new Date().getFullYear();
+
+    /**
+     * COMMUNITY WIZARD (working version)
+     * -------------------------------------------------------
+     * Key detail:
+     * - Google Apps Script Web Apps often fail CORS preflight when sending application/json.
+     * - So we send JSON as "text/plain" to avoid the preflight OPTIONS request.
+     *
+     * You already deployed your Apps Script Web App:
+     *  - Execute as: Me
+     *  - Access: Anyone
+     *  - URL must end in /exec
+     */
+    const COMMUNITY_API_URL = "https://script.google.com/macros/s/AKfycbxR8QvrIVKPz5s6s4IryCXTUXQg37JPrd7v-ZsLm39UqxkGCHt-M5YrFakN2gCrzpiw/exec";
+
+    (function () {
+      "use strict";
+
+      const modalEl = document.getElementById("joinCommunityModal");
+      const form = document.getElementById("communityWizardForm");
+      if (!modalEl || !form) return;
+
+      const steps = [...form.querySelectorAll(".wizard-step")];
+      const pills = [...modalEl.querySelectorAll("[data-step-pill]")];
+
+      const btnPrev = document.getElementById("wizPrev");
+      const btnNext = document.getElementById("wizNext");
+      const btnSubmit = document.getElementById("wizSubmit");
+
+      const progress = document.getElementById("wizardProgress");
+      const stepLabel = document.getElementById("wizardStepLabel");
+
+      const loading = document.getElementById("wizLoading");
+      const success = document.getElementById("wizSuccess");
+      const error = document.getElementById("wizError");
+
+      const honeypot = document.getElementById("hpWebsite");
+
+      let currentStep = 1;
+      const totalSteps = steps.length;
+
+      // ---------------------------
+      // Validation helpers
+      // ---------------------------
+      const clearErrors = () => {
+        modalEl.querySelectorAll(".field-error").forEach((e) => {
+          e.textContent = "";
+          e.classList.add("d-none");
+        });
+      };
+
+      const showError = (name, msg) => {
+        const el = modalEl.querySelector(`[data-error-for="${name}"]`);
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.remove("d-none");
+      };
+
+      const validateCurrentStep = () => {
+        clearErrors();
+
+        const activeStep = steps.find((s) => Number(s.dataset.step) === currentStep);
+        if (!activeStep) return true;
+
+        const requiredFields = [...activeStep.querySelectorAll("[required]")];
+        let ok = true;
+
+        requiredFields.forEach((field) => {
+          // Checkbox required (consent)
+          if (field.type === "checkbox") {
+            if (!field.checked) {
+              ok = false;
+              showError(field.name, "This is required.");
+            }
+            return;
+          }
+
+          const value = (field.value || "").trim();
+          if (!value) {
+            ok = false;
+            showError(field.name, "This is required.");
+            return;
+          }
+
+          // Minimal email format check
+          if (field.type === "email") {
+            const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            if (!validEmail) {
+              ok = false;
+              showError(field.name, "Enter a valid email address.");
+            }
+          }
+        });
+
+        return ok;
+      };
+
+      // ---------------------------
+      // Step navigation + UI state
+      // ---------------------------
+      const setStep = (n) => {
+        currentStep = Math.max(1, Math.min(totalSteps, n));
+
+        steps.forEach((s) => s.classList.toggle("active", Number(s.dataset.step) === currentStep));
+        pills.forEach((p) => p.classList.toggle("active", Number(p.dataset.stepPill) === currentStep));
+
+        // Progress bar %
+        const pct = Math.round((currentStep / totalSteps) * 100);
+        progress.style.width = pct + "%";
+        stepLabel.textContent = `Step ${currentStep} of ${totalSteps}`;
+
+        // Buttons logic
+        btnPrev.disabled = currentStep === 1;
+        btnNext.classList.toggle("d-none", currentStep === totalSteps);
+        btnSubmit.classList.toggle("d-none", currentStep !== totalSteps);
+
+        // Clear status messages per step change
+        loading.classList.add("d-none");
+        success.classList.add("d-none");
+        error.classList.add("d-none");
+
+        // Accessibility: focus first field of step
+        const activeStep = steps.find(s => Number(s.dataset.step) === currentStep);
+        const focusable = activeStep?.querySelector("input, select, textarea, button");
+        if (focusable) setTimeout(() => focusable.focus(), 50);
+      };
+
+      // ---------------------------
+      // Collect payload for Apps Script
+      // - FormData gives single values
+      // - We manually aggregate checkbox groups
+      // ---------------------------
+      const collectPayload = () => {
+        const fd = new FormData(form);
+        const data = Object.fromEntries(fd.entries());
+
+        // Checkbox groups -> comma-separated string
+        data.challenges = [...form.querySelectorAll('input[name="challenges"]:checked')]
+          .map(x => x.value)
+          .join(", ");
+
+        data.support = [...form.querySelectorAll('input[name="support"]:checked')]
+          .map(x => x.value)
+          .join(", ");
+
+        // Consent checkbox -> explicit Yes/No
+        data.consent = form.querySelector('input[name="consent"]').checked ? "Yes" : "No";
+
+        return data;
+      };
+
+      // Next / Prev
+      btnNext.addEventListener("click", () => {
+        if (!validateCurrentStep()) return;
+        setStep(currentStep + 1);
+      });
+
+      btnPrev.addEventListener("click", () => setStep(currentStep - 1));
+
+      // ---------------------------
+      // Submit to Apps Script
+      // IMPORTANT:
+      // - Use text/plain to avoid CORS preflight OPTIONS issue.
+      // ---------------------------
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!validateCurrentStep()) return;
+
+        // Honeypot anti-bot: if filled, silently stop
+        if ((honeypot.value || "").trim() !== "") return;
+
+        const payload = collectPayload();
+
+        // UI state
+        loading.classList.remove("d-none");
+        success.classList.add("d-none");
+        error.classList.add("d-none");
+
+        btnPrev.disabled = true;
+        btnNext.disabled = true;
+        btnSubmit.disabled = true;
+
+        try {
+          const res = await fetch(COMMUNITY_API_URL, {
+            method: "POST",
+            // This prevents preflight and makes Apps Script receive the body reliably
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+
+          // Apps Script returns JSON via ContentService
+          const out = await res.json();
+
+          if (out && out.ok) {
+            loading.classList.add("d-none");
+            success.classList.remove("d-none");
+
+            // Reset form after success (and return to step 1)
+            form.reset();
+            setStep(1);
+          } else {
+            throw new Error(out?.error || "Unknown error");
+          }
+        } catch (err) {
+          console.error("Community form submit error:", err);
+          loading.classList.add("d-none");
+          error.classList.remove("d-none");
+        } finally {
+          btnPrev.disabled = false;
+          btnNext.disabled = false;
+          btnSubmit.disabled = false;
+        }
+      });
+
+      // ---------------------------
+      // Modal lifecycle: reset wizard
+      // ---------------------------
+      modalEl.addEventListener("shown.bs.modal", () => {
+        clearErrors();
+        setStep(1);
+      });
+
+      modalEl.addEventListener("hidden.bs.modal", () => {
+        form.reset();
+        clearErrors();
+        loading.classList.add("d-none");
+        success.classList.add("d-none");
+        error.classList.add("d-none");
+        setStep(1);
+      });
+
+      // Init
+      setStep(1);
+    })();
+
+
+    /**
+   * ✅ UPDATE YOUR EXISTING SUBMIT SUCCESS BLOCK
+   * Find this in your submit handler:
+   *   if (out && out.ok) { ... }
+   * Replace ONLY the inside of that success branch with the code below.
+   */
+
+  // ---- inside: if (out && out.ok) { ... } ----
+  loading.classList.add("d-none");
+  success.classList.remove("d-none");
+
+  // Close the wizard modal first (Bootstrap will handle focus restore)
+  const joinModalEl = document.getElementById("joinCommunityModal");
+  const joinModalInstance = bootstrap.Modal.getInstance(joinModalEl);
+  if (joinModalInstance) joinModalInstance.hide();
+
+  // Reset form after success
+  form.reset();
+  setStep(1);
+
+  // Show the congrats modal after the first modal finishes closing
+  joinModalEl.addEventListener("hidden.bs.modal", function onHidden() {
+    joinModalEl.removeEventListener("hidden.bs.modal", onHidden);
+
+    const successEl = document.getElementById("successModal");
+    const successInstance = new bootstrap.Modal(successEl, {
+      backdrop: "static",   // prevents accidental close by clicking outside
+      keyboard: true        // allow ESC for accessibility
+    });
+
+    successInstance.show();
+  });
   </script>
 </body>
 </html>
-
+```
