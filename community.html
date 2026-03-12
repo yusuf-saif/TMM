@@ -529,6 +529,7 @@
                   <label class="form-label" for="referralSource">How did you hear about us?</label>
                   <select id="referralSource" class="form-select form-select-lg" name="referralSource" required>
                     <option value="" selected disabled>Select one</option>
+                    <option>TMM Member</option>
                     <option>Social media</option>
                     <option>Referral</option>
                     <option>Event</option>
@@ -627,6 +628,7 @@
         </p>
         <p class="text-muted-2 mb-0">
           Please check your email for next steps and your WhatsApp community link.
+          Or Click the button below to go to your email inbox now.
           <span class="d-block mt-2 small text-muted-2">
             (If you don’t see it, check Spam/Promotions.)
           </span>
@@ -635,7 +637,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-          Got it <i class="bi bi-check2 ms-1"></i>
+         <a href="https://chat.whatsapp.com/IT19ZTxvK90HLUqY1AKmTB?mode=gi_t" target="_blank" rel="noreferrer" aria-label="Go to Email Inbox">Join Whatsapp Community</a> <i class="bi bi-check2 ms-1"></i>
         </button>
       </div>
     </div>
@@ -933,6 +935,23 @@
             // Reset form after success (and return to step 1)
             form.reset();
             setStep(1);
+
+            // Close the wizard modal first (Bootstrap will handle focus restore)
+            const joinModalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (joinModalInstance) joinModalInstance.hide();
+
+            // Show the congrats modal after the first modal finishes closing
+            modalEl.addEventListener("hidden.bs.modal", function onHidden() {
+              modalEl.removeEventListener("hidden.bs.modal", onHidden);
+
+              const successEl = document.getElementById("successModal");
+              const successInstance = new bootstrap.Modal(successEl, {
+                backdrop: "static",   // prevents accidental close by clicking outside
+                keyboard: true        // allow ESC for accessibility
+              });
+
+              successInstance.show();
+            });
           } else {
             throw new Error(out?.error || "Unknown error");
           }
@@ -967,40 +986,6 @@
       // Init
       setStep(1);
     })();
-
-
-    /**
-   * ✅ UPDATE YOUR EXISTING SUBMIT SUCCESS BLOCK
-   * Find this in your submit handler:
-   *   if (out && out.ok) { ... }
-   * Replace ONLY the inside of that success branch with the code below.
-   */
-
-  // ---- inside: if (out && out.ok) { ... } ----
-  loading.classList.add("d-none");
-  success.classList.remove("d-none");
-
-  // Close the wizard modal first (Bootstrap will handle focus restore)
-  const joinModalEl = document.getElementById("joinCommunityModal");
-  const joinModalInstance = bootstrap.Modal.getInstance(joinModalEl);
-  if (joinModalInstance) joinModalInstance.hide();
-
-  // Reset form after success
-  form.reset();
-  setStep(1);
-
-  // Show the congrats modal after the first modal finishes closing
-  joinModalEl.addEventListener("hidden.bs.modal", function onHidden() {
-    joinModalEl.removeEventListener("hidden.bs.modal", onHidden);
-
-    const successEl = document.getElementById("successModal");
-    const successInstance = new bootstrap.Modal(successEl, {
-      backdrop: "static",   // prevents accidental close by clicking outside
-      keyboard: true        // allow ESC for accessibility
-    });
-
-    successInstance.show();
-  });
   </script>
 </body>
 </html>
