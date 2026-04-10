@@ -73,7 +73,12 @@ const CONFIG = {
   EVENT_TITLE: "Excel For Business Mastery",
   EVENT_DATE_LABEL: "TODAY",
   EVENT_EMAIL_SUBJECT: "TODAY: TMM Community Meetup is Happening! 🚀",
-  EVENT_JOIN_LINK: "https://meet.google.com/ocd-fome-omq"
+  EVENT_JOIN_LINK: "https://meet.google.com/ocd-fome-omq",
+  
+  // Context Content (Next Meeting)
+  NEXT_MEETING_TITLE: "Excel For Business Mastery - Session 2",
+  NEXT_MEETING_DATE_LABEL: "TOMORROW at 10:00 AM prompt",
+  NEXT_MEETING_EMAIL_SUBJECT: "TOMORROW: Excel For Business Mastery, Session 2 is Happening! 🚀"
 };
 
 /** =========================
@@ -156,7 +161,18 @@ function ensureHeader_(sheet) {
     "Heard About Us", "Comments", "Consent",
     "Welcome Email Sent", "Welcome Email Sent At", "Welcome Email Error",
     "Session 1 Thank You Sent", "Session 1 Thank You Sent At", "Session 1 Thank You Error",
-    "Event Invite Sent", "Event Invite Sent At", "Event Invite Error"
+    "Event Invite Sent", "Event Invite Sent At", "Event Invite Error",
+    "Next Meeting Reminder Sent", "Next Meeting Reminder Sent At", "Next Meeting Reminder Error",
+    "Session 2 Reminder Sent", "Session 2 Reminder Sent At", "Session 2 Reminder Error",
+    "Session 2 Thank You Sent", "Session 2 Thank You Sent At", "Session 2 Thank You Error",
+    "Session 3 Reminder Sent", "Session 3 Reminder Sent At", "Session 3 Reminder Error",
+    "Session 3 Thank You Sent", "Session 3 Thank You Sent At", "Session 3 Thank You Error",
+    "Session 4 Reminder Sent", "Session 4 Reminder Sent At", "Session 4 Reminder Error",
+    "Session 4 Thank You Sent", "Session 4 Thank You Sent At", "Session 4 Thank You Error",
+    "Session 5 Reminder Sent", "Session 5 Reminder Sent At", "Session 5 Reminder Error",
+    "Session 5 Thank You Sent", "Session 5 Thank You Sent At", "Session 5 Thank You Error",
+    "Session 6 Reminder Sent", "Session 6 Reminder Sent At", "Session 6 Reminder Error",
+    "Session 6 Thank You Sent", "Session 6 Thank You Sent At", "Session 6 Thank You Error"
   ]);
   sheet.getRange(1, 1, 1, sheet.getLastColumn()).setFontWeight("bold");
   sheet.setFrozenRows(1);
@@ -372,13 +388,83 @@ function sendEventMail_(toEmail, fullName, context) {
   MailApp.sendEmail(mailOptions);
 }
 
+/** 4. Next Meeting Reminder Template */
+function sendNextMeetingReminderMail_(toEmail, fullName, context) {
+  const safeName = escapeHtml_(fullName);
+  const subject = CONFIG.NEXT_MEETING_EMAIL_SUBJECT;
+  
+  const hasRecording = CONFIG.SESSION_1_RECORDING_LINK && String(CONFIG.SESSION_1_RECORDING_LINK).trim() !== "";
+
+  const textBody =
+    `Hi ${fullName},\n\nThis is a quick reminder that our next session for ${CONFIG.NEXT_MEETING_TITLE} is happening ${CONFIG.NEXT_MEETING_DATE_LABEL}!\n\n` +
+    `Join here tomorrow: ${CONFIG.EVENT_JOIN_LINK}\n\n` +
+    `In case you missed the previous session, you can catch up with the resources below:\n` +
+    `Resources: ${CONFIG.SESSION_1_RESOURCE_LINK}\n` +
+    (hasRecording ? `Recording: ${CONFIG.SESSION_1_RECORDING_LINK}\n\n` : "\n") +
+    `Warm regards,\n${CONFIG.FROM_NAME}`;
+
+  const htmlBody = `
+  <div style="background:#f3f5ff;padding:24px 0;">
+    <table align="center" width="600" style="width:600px;background:#ffffff;border-radius:16px;border:1px solid rgba(15,23,42,.10);">
+      <tr>
+        <td style="background:linear-gradient(135deg, ${CONFIG.BRAND_PRIMARY}, ${CONFIG.BRAND_INK});padding:18px 22px;">
+          <table width="100%">
+            <tr>
+              <td width="56" valign="middle"><img src="cid:logo_image" width="46" style="border-radius:12px;background:#fff;padding:6px;"></td>
+              <td valign="middle" style="padding-left:12px;">
+                <div style="color:#ffffff;font-family:Arial,sans-serif;font-weight:800;font-size:16px;">The Market Masters (TMM)</div>
+                <div style="color:rgba(255,255,255,.86);font-family:Arial,sans-serif;font-size:12.5px;">Meeting Reminder</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:26px 22px 10px 22px;font-family:Arial,sans-serif;font-size:15px;color:#0f172a;line-height:1.7;">
+          <p>Hi <strong>${safeName}</strong>,</p>
+          <p>This is a quick reminder that our next virtual meetup: <strong>${CONFIG.NEXT_MEETING_TITLE}</strong> is happening <strong>${CONFIG.NEXT_MEETING_DATE_LABEL}</strong>! We're excited to learn and grow together.</p>
+          
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};">
+            <div style="font-weight:800;margin-bottom:6px;">Join Tomorrow's Session</div>
+            <div>Click the button below to enter the Google Meet at the scheduled time.</div>
+             <a href="${CONFIG.EVENT_JOIN_LINK}" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-top:10px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Join The Meeting →</a>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">Previous Session Catch-up</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">In case you missed the previous session or want to review, here are the resources:</div>
+            <a href="${CONFIG.SESSION_1_RESOURCE_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">View Presentation →</a>
+            ${hasRecording ? `<a href="${CONFIG.SESSION_1_RECORDING_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:10px 16px;color:#fff;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Watch Recording →</a>` : ""}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px 22px 22px;font-family:Arial,sans-serif;font-size:12.5px;color:rgba(15,23,42,.70);border-top:1px solid rgba(15,23,42,.10);">
+          Need help? <a href="mailto:${CONFIG.ADMIN_EMAIL}" style="color:${CONFIG.BRAND_INK};font-weight:800;">${CONFIG.ADMIN_EMAIL}</a><br><br>
+          <strong>${CONFIG.FROM_NAME}</strong> • <a href="${CONFIG.WEBSITE_URL}" style="color:${CONFIG.BRAND_INK};">${CONFIG.WEBSITE_URL}</a>
+        </td>
+      </tr>
+    </table>
+  </div>`;
+
+  const mailOptions = {
+    to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody
+  };
+  
+  if (context.logoBlob) mailOptions.inlineImages = { logo_image: context.logoBlob };
+  if (context.flyerBlob) mailOptions.attachments = [context.flyerBlob];
+
+  MailApp.sendEmail(mailOptions);
+}
+
 /** 
- * 4. TEMPLATE ROUTING MAP
+ * 5. TEMPLATE ROUTING MAP
  * Maps template names to their respective functions above.
  */
 const EMAIL_TEMPLATES = {
   "session1": sendSession1ThankYouEmail_,
-  "event": sendEventMail_
+  "event": sendEventMail_,
+  "next_meeting": sendNextMeetingReminderMail_
 };
 
 
@@ -491,10 +577,69 @@ function sendTodayEventMailBatch() {
   });
 }
 
+/** RUN THIS: Tomorrow's Meeting Reminder */
+function sendNextMeetingReminderBatch() {
+  sendCampaignEmailBatch_({
+    baseColumnName: "Next Meeting Reminder", 
+    batchLimit: 100,
+    resend: false,
+    templateName: "next_meeting",
+    fileIds: { logoId: CONFIG.LOGO_FILE_ID, attachId: CONFIG.FLYER_FILE_ID } // includes flyer too just in case
+  });
+}
+
+/** 
+ * TEST FUNCTION: Send a test of the Next Meeting Reminder to the Admin Email 
+ * Run this to preview how the email looks before sending the batch.
+ */
+function testNextMeetingReminder() {
+  const adminEmail = Session.getActiveUser().getEmail() || CONFIG.ADMIN_EMAIL;
+  Logger.log("Sending test email to: " + adminEmail);
+  
+  const context = {};
+  if (CONFIG.LOGO_FILE_ID) {
+    try {
+      context.logoBlob = DriveApp.getFileById(CONFIG.LOGO_FILE_ID).getBlob().setName("logo_image");
+    } catch(e) { Logger.log("Could not load logo: " + e.message); }
+  }
+  if (CONFIG.FLYER_FILE_ID) {
+    try {
+      context.flyerBlob = DriveApp.getFileById(CONFIG.FLYER_FILE_ID).getBlob();
+    } catch(e) { Logger.log("Could not load flyer: " + e.message); }
+  }
+
+  sendNextMeetingReminderMail_(adminEmail, "Test Admin User", context);
+  Logger.log("Test email sent successfully! Check your inbox.");
+}
+
 
 /** =========================
  * G. UTILITY HELPERS
  * ========================== */
+
+/** RUN THIS: Update Sheet Headers Manually */
+function updateSheetHeaders() {
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+  if (!sheet) return;
+  
+  const columns = [
+    "Next Meeting Reminder",
+    "Session 2 Reminder", "Session 2 Thank You",
+    "Session 3 Reminder", "Session 3 Thank You",
+    "Session 4 Reminder", "Session 4 Thank You",
+    "Session 5 Reminder", "Session 5 Thank You",
+    "Session 6 Reminder", "Session 6 Thank You"
+  ];
+  
+  columns.forEach(c => {
+    getColumnIndexByName_(sheet, c + " Sent");
+    getColumnIndexByName_(sheet, c + " Sent At");
+    getColumnIndexByName_(sheet, c + " Error");
+  });
+  
+  Logger.log("Sheet tracking columns have been added!");
+}
 
 function notifyAdmin_(body) {
   const subject = "New Community Registration — " + body.fullName;
