@@ -116,13 +116,13 @@
 
       <div class="collapse navbar-collapse" id="navTmm">
         <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-          <li class="nav-item"><a class="nav-link" data-nav="home" href="index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link" data-nav="about" href="about.html">About</a></li>
-          <li class="nav-item"><a class="nav-link" data-nav="services" href="services.html">Services</a></li>
-          <li class="nav-item"><a class="nav-link" data-nav="events" href="events.html">Events</a></li>
-          <li class="nav-item"><a class="nav-link" data-nav="contact" href="contact.html">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav="home" href="./">Home</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav="about" href="about">About</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav="services" href="services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav="events" href="events">Events</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav="contact" href="contact">Contact</a></li>
           <li class="nav-item ms-lg-2">
-            <a class="btn btn-primary btn-sm" data-nav="community" href="community.html">
+            <a class="btn btn-primary btn-sm" data-nav="community" href="community">
               Join our Community <i class="bi bi-arrow-up-right ms-1"></i>
             </a>
           </li>
@@ -138,24 +138,25 @@
         <div class="row align-items-end gy-3">
           <div class="col-lg-8">
             <div class="smallcaps reveal">Community</div>
-            <h1 class="display-5 fw-bold mb-2 reveal">Join a network built for growth & visibility.</h1>
+            <h1 class="display-5 fw-bold mb-2 reveal">Memberships are currently at capacity.</h1>
             <p class="lead mb-0 reveal">
-              A safe haven for vendors and business owners to collaborate, learn, and access opportunities.
+              We're focusing on our current members to ensure the highest quality of support. 
+              Join our waitlist to be notified when we reopen.
             </p>
           </div>
 
           <div class="col-lg-4 text-lg-end reveal">
-            <!-- CTA triggers the wizard modal -->
+            <!-- CTA triggers the closed modal -->
             <button
               type="button"
               class="btn btn-primary"
               data-bs-toggle="modal"
-              data-bs-target="#joinCommunityModal"
+              data-bs-target="#communityClosedModal"
               aria-describedby="joinHelpText">
-              Start Registration <i class="bi bi-arrow-right ms-1"></i>
+              Join the Waitlist <i class="bi bi-arrow-right ms-1"></i>
             </button>
             <div id="joinHelpText" class="text-muted-2 small mt-2">
-              Takes about 2–3 minutes. You’ll receive a welcome email + WhatsApp link after submitting.
+              We'll reach out to you as soon as a spot opens up.
             </div>
           </div>
         </div>
@@ -184,10 +185,10 @@
             </div>
 
             <div class="d-flex flex-wrap gap-2 mt-4">
-              <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#joinCommunityModal">
-                Join now <i class="bi bi-arrow-right ms-1"></i>
+              <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#communityClosedModal">
+                Join our waitlist <i class="bi bi-arrow-right ms-1"></i>
               </button>
-              <a class="btn btn-outline-primary" href="events.html">See events</a>
+              <a class="btn btn-outline-primary" href="events">See events</a>
             </div>
           </div>
 
@@ -210,13 +211,13 @@
                 </div>
 
                 <div class="mt-4">
-                  <button class="btn btn-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#joinCommunityModal">
-                    Start registration <i class="bi bi-arrow-right ms-1"></i>
+                  <button class="btn btn-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#communityClosedModal">
+                    Get notified <i class="bi bi-arrow-right ms-1"></i>
                   </button>
                 </div>
 
                 <div class="text-muted-2 small mt-3">
-                  Want to partner or sponsor an activation? <a href="contact.html">Contact us</a>.
+                  Want to partner or sponsor an activation? <a href="contact">Contact us</a>.
                 </div>
               </div>
             </div>
@@ -231,7 +232,50 @@
   </main>
 
   <!-- =========================================================
-       JOIN COMMUNITY MODAL — Multi-step wizard (responsive + accessible)
+       REGISTRATION CLOSED MODAL
+       ========================================================= -->
+  <div class="modal fade" id="communityClosedModal" tabindex="-1" aria-labelledby="communityClosedTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <div class="smallcaps mb-1">Membership Status</div>
+            <h2 class="h4 fw-bold mb-0" id="communityClosedTitle">Waitlist Only</h2>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="mb-3">
+            Thank you for your interest in joining <strong>The Market Masters (TMM) Community</strong>.
+          </p>
+          <p class="text-muted-2 mb-4">
+            To ensure we provide the best possible experience and support to our current members, 
+            we have temporarily reached capacity for new memberships.
+          </p>
+          <div class="p-3 rounded-4 mb-4" style="background: rgba(70,100,232,0.05); border: 1px solid rgba(70,100,232,0.1);">
+            <div class="fw-bold mb-1"><i class="bi bi-info-circle me-1"></i> What happens next?</div>
+            <div class="small text-muted-2">
+              By joining our waitlist, you'll be the first to know as soon as a spot becomes available. 
+              We'll reach out directly with your invitation link.
+            </div>
+          </div>
+          <a href="contact?subject=Join%20Waitlist" class="btn btn-primary w-100">
+            Join the Waitlist <i class="bi bi-send ms-1"></i>
+          </a>
+        </div>
+
+        <div class="modal-footer">
+          <div class="text-muted-2 small text-center w-100">
+            Need immediate help with your brand? <a href="contact" class="fw-bold">Contact us</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       JOIN COMMUNITY MODAL — (Retained for future use, but triggers removed)
        ========================================================= -->
   <div class="modal fade" id="joinCommunityModal" tabindex="-1" aria-labelledby="joinCommunityTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
@@ -709,8 +753,8 @@
       <div class="d-flex flex-column flex-md-row justify-content-between gap-2 text-muted-2 small">
         <div>© <span id="yearNow"></span> The Market Masters. All rights reserved.</div>
         <div class="d-flex gap-3">
-          <a href="community.html">Community</a>
-          <a href="contact.html">Work with us</a>
+          <a href="community">Community</a>
+          <a href="contact">Work with us</a>
         </div>
       </div>
     </div>
