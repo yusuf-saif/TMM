@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# 1. Redirect externally: if a user types /about.html, redirect them to /about
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^\ ]+)\.html
+RewriteRule ^/?(.*)\.html$ /$1 [L,R=301]
+
+# 2. Map internally: if a user requests /about, silently serve about.html
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^/?(.*)$ /$1.html [L]
