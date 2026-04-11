@@ -69,6 +69,11 @@ const CONFIG = {
   SESSION_1_RESOURCE_LINK: "https://docs.google.com/presentation/d/1pvTNSbN0IanNj2n1sqih4et5yKga_pTH/edit?usp=sharing&ouid=112076881544159926854&rtpof=true&sd=true",
   SESSION_1_RECORDING_LINK: "https://drive.google.com/file/d/1OrJzxuw2lPNTYCWkxDy5zuT90lzwhAFp/view?usp=drivesdk", // Official recording link
 
+  // Context Links (Session 2)
+  SESSION_2_RESOURCE_LINK: "https://drive.google.com/file/d/1Mi7VbAs81RlvB9XOfGxEeuM3f94JuLP7/view?usp=sharing",
+  SESSION_2_RECORDING_1_LINK: "https://drive.google.com/file/d/1HsLHtobLCUEI3bdyt_aJITJ_ox6VGofG/view?usp=sharing",
+  SESSION_2_RECORDING_2_LINK: "https://drive.google.com/file/d/1N3YZf4XBNDniXJWJzcw4v203RL0yX8lf/view?usp=sharing",
+
   // Context Content (Events)
   EVENT_TITLE: "Excel For Business Mastery",
   EVENT_DATE_LABEL: "TODAY",
@@ -457,12 +462,77 @@ function sendNextMeetingReminderMail_(toEmail, fullName, context) {
   MailApp.sendEmail(mailOptions);
 }
 
+/** 5. Session 2 Thank You Template */
+function sendSession2ThankYouEmail_(toEmail, fullName, context) {
+  const safeName = escapeHtml_(fullName);
+  const subject = "Thank you for attending Session 2! 🚀";
+
+  const textBody =
+    `Hi ${fullName},\n\nThank you for joining us for Session 2 of Excel for Business Mastery! We hope you found the session insightful.\n\n` +
+    `Practice Resource:\n${CONFIG.SESSION_2_RESOURCE_LINK}\n\n` +
+    `Session Recordings:\n- Part 1: ${CONFIG.SESSION_2_RECORDING_1_LINK}\n- Part 2: ${CONFIG.SESSION_2_RECORDING_2_LINK}\n\n` +
+    `Keep practicing and see you in the next session!\n\n` +
+    `Warm regards,\n${CONFIG.FROM_NAME}`;
+
+  const htmlBody = `
+  <div style="background:#f3f5ff;padding:24px 0;">
+    <table align="center" width="600" style="width:600px;background:#ffffff;border-radius:16px;border:1px solid rgba(15,23,42,.10);">
+      <tr>
+        <td style="background:linear-gradient(135deg, ${CONFIG.BRAND_PRIMARY}, ${CONFIG.BRAND_INK});padding:18px 22px;">
+          <table width="100%">
+            <tr>
+              <td width="56" valign="middle"><img src="cid:logo_image" width="46" style="border-radius:12px;background:#fff;padding:6px;"></td>
+              <td valign="middle" style="padding-left:12px;">
+                <div style="color:#ffffff;font-family:Arial,sans-serif;font-weight:800;font-size:16px;">The Market Masters (TMM)</div>
+                <div style="color:rgba(255,255,255,.86);font-family:Arial,sans-serif;font-size:12.5px;">Session 2 Recap</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:26px 22px 10px 22px;font-family:Arial,sans-serif;font-size:15px;color:#0f172a;line-height:1.7;">
+          <p>Hi <strong>${safeName}</strong>,</p>
+          <p>Thank you for joining us for <strong>Session 2 of Excel for Business Mastery</strong>. We hope you're feeling more confident with your data skills!</p>
+          
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">Session Resources</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">Access the practice file and session recordings below.</div>
+            
+            <a href="${CONFIG.SESSION_2_RESOURCE_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Download Practice File →</a>
+            
+            <div style="margin-top:10px;">
+              <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Watch Recordings:</div>
+              <a href="${CONFIG.SESSION_2_RECORDING_1_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:8px 14px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:8px;font-family:Arial,sans-serif;font-weight:700;font-size:12px;">Recording Part 1</a>
+              <a href="${CONFIG.SESSION_2_RECORDING_2_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:8px 14px;color:#fff;margin-bottom:8px;text-decoration:none;border-radius:8px;font-family:Arial,sans-serif;font-weight:700;font-size:12px;">Recording Part 2</a>
+            </div>
+          </div>
+
+          <p>Keep practicing, and don't hesitate to reach out in the WhatsApp group if you have any questions.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px 22px 22px;font-family:Arial,sans-serif;font-size:12.5px;color:rgba(15,23,42,.70);border-top:1px solid rgba(15,23,42,.10);">
+          Need help? <a href="mailto:${CONFIG.ADMIN_EMAIL}" style="color:${CONFIG.BRAND_INK};font-weight:800;">${CONFIG.ADMIN_EMAIL}</a><br><br>
+          <strong>${CONFIG.FROM_NAME}</strong> • <a href="${CONFIG.WEBSITE_URL}" style="color:${CONFIG.BRAND_INK};">${CONFIG.WEBSITE_URL}</a>
+        </td>
+      </tr>
+    </table>
+  </div>`;
+
+  MailApp.sendEmail({ 
+    to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody,
+    inlineImages: context.logoBlob ? { logo_image: context.logoBlob } : undefined 
+  });
+}
+
 /** 
  * 5. TEMPLATE ROUTING MAP
  * Maps template names to their respective functions above.
  */
 const EMAIL_TEMPLATES = {
   "session1": sendSession1ThankYouEmail_,
+  "session2_thanks": sendSession2ThankYouEmail_,
   "event": sendEventMail_,
   "next_meeting": sendNextMeetingReminderMail_
 };
@@ -588,6 +658,17 @@ function sendNextMeetingReminderBatch() {
   });
 }
 
+/** RUN THIS: Session 2 Thank You */
+function sendSession2ThankYouBatch() {
+  sendCampaignEmailBatch_({
+    baseColumnName: "Session 2 Thank You", 
+    batchLimit: 100,
+    resend: false,
+    templateName: "session2_thanks",
+    fileIds: { logoId: CONFIG.LOGO_FILE_ID } 
+  });
+}
+
 /** 
  * TEST FUNCTION: Send a test of the Next Meeting Reminder to the Admin Email 
  * Run this to preview how the email looks before sending the batch.
@@ -609,6 +690,24 @@ function testNextMeetingReminder() {
   }
 
   sendNextMeetingReminderMail_(adminEmail, "Test Admin User", context);
+  Logger.log("Test email sent successfully! Check your inbox.");
+}
+
+/** 
+ * TEST FUNCTION: Send a test of the Session 2 Thank You to the Admin Email 
+ */
+function testSession2ThankYou() {
+  const adminEmail = Session.getActiveUser().getEmail() || CONFIG.ADMIN_EMAIL;
+  Logger.log("Sending test Session 2 email to: " + adminEmail);
+  
+  const context = {};
+  if (CONFIG.LOGO_FILE_ID) {
+    try {
+      context.logoBlob = DriveApp.getFileById(CONFIG.LOGO_FILE_ID).getBlob().setName("logo_image");
+    } catch(e) { Logger.log("Could not load logo: " + e.message); }
+  }
+
+  sendSession2ThankYouEmail_(adminEmail, "Test Admin User", context);
   Logger.log("Test email sent successfully! Check your inbox.");
 }
 
