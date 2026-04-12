@@ -147,7 +147,10 @@ function doPost(e) {
   }
 }
 
-function doGet() {
+function doGet(e) {
+  if (e && e.parameter && e.parameter.track) {
+    return trackEmailOpen_(e.parameter.track, e.parameter.campaign || "unknown");
+  }
   return json_({ ok: true, message: "TMM Community API running.", time: new Date().toISOString() });
 }
 
@@ -259,6 +262,7 @@ function sendWelcomeEmail_(toEmail, fullName) {
         </td>
       </tr>
     </table>
+    ${getTrackingPixelHtml_(toEmail, "Welcome Email")}
   </div>`;
 
   MailApp.sendEmail({ to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody });
@@ -317,11 +321,12 @@ function sendSession1ThankYouEmail_(toEmail, fullName, context) {
         </td>
       </tr>
     </table>
+    ${context.pixelHtml || ""}
   </div>`;
 
-  MailApp.sendEmail({ 
+  MailApp.sendEmail({
     to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody,
-    inlineImages: context.logoBlob ? { logo_image: context.logoBlob } : undefined 
+    inlineImages: context.logoBlob ? { logo_image: context.logoBlob } : undefined
   });
 }
 
@@ -381,6 +386,7 @@ function sendEventMail_(toEmail, fullName, context) {
         </td>
       </tr>
     </table>
+    ${context.pixelHtml || ""}
   </div>`;
 
   const mailOptions = {
@@ -450,12 +456,13 @@ function sendNextMeetingReminderMail_(toEmail, fullName, context) {
         </td>
       </tr>
     </table>
+    ${context.pixelHtml || ""}
   </div>`;
 
   const mailOptions = {
     to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody
   };
-  
+
   if (context.logoBlob) mailOptions.inlineImages = { logo_image: context.logoBlob };
   if (context.flyerBlob) mailOptions.attachments = [context.flyerBlob];
 
@@ -518,15 +525,16 @@ function sendSession2ThankYouEmail_(toEmail, fullName, context) {
         </td>
       </tr>
     </table>
+    ${context.pixelHtml || ""}
   </div>`;
 
-  MailApp.sendEmail({ 
+  MailApp.sendEmail({
     to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody,
-    inlineImages: context.logoBlob ? { logo_image: context.logoBlob } : undefined 
+    inlineImages: context.logoBlob ? { logo_image: context.logoBlob } : undefined
   });
 }
 
-/** 
+/**
  * 5. TEMPLATE ROUTING MAP
  * Maps template names to their respective functions above.
  */
@@ -602,6 +610,8 @@ function sendCampaignEmailBatch_(options) {
     if (!email || (deliveryStatus === "YES" && !resend)) continue;
     
     try {
+      // Set per-recipient tracking pixel before calling the template
+      context.pixelHtml = getTrackingPixelHtml_(email, baseColumnName);
       // Direct routing execution
       templateFn(email, name, context);
       
@@ -774,6 +784,49 @@ function json_(obj) {
 
 function escapeHtml_(str) {
   return String(str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+/** Logs an email open event when the tracking pixel is fetched by the recipient's mail client */
+function trackEmailOpen_(email, campaignKey) {
+  try {
+    const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+    const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+    if (sheet) {
+      const values = sheet.getDataRange().getValues();
+      const headers = values[0];
+      const emailIdx = headers.indexOf("Email");
+      if (emailIdx !== -1) {
+        for (let r = 1; r < values.length; r++) {
+          if (String(values[r][emailIdx]).trim().toLowerCase() === String(email).trim().toLowerCase()) {
+            const colName = campaignKey + " Opened At";
+            const openedColIdx = getColumnIndexByName_(sheet, colName);
+            // Only record first open — do not overwrite with repeat opens
+            if (!values[r][openedColIdx]) {
+              sheet.getRange(r + 1, openedColIdx + 1).setValue(new Date());
+            }
+            break;
+          }
+        }
+      }
+    }
+  } catch (err) {
+    // Silently fail — tracking must never break the image load
+  }
+  // Return a 1×1 transparent SVG — smallest valid image response Apps Script can return
+  return ContentService.createTextOutput('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>')
+    .setMimeType(ContentService.MimeType.XML);
+}
+
+/** Generates a hidden 1×1 tracking pixel <img> tag for a specific recipient + campaign */
+function getTrackingPixelHtml_(email, campaignKey) {
+  try {
+    const appUrl = ScriptApp.getService().getUrl();
+    if (!appUrl) return "";
+    const pixelUrl = appUrl + "?track=" + encodeURIComponent(email) + "&campaign=" + encodeURIComponent(campaignKey);
+    return `<img src="${pixelUrl}" width="1" height="1" style="display:none;" alt="">`;
+  } catch (e) {
+    return "";
+  }
 }
 
 /** RUN THIS ONCE AFTER PASTING CODE */
