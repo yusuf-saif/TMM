@@ -83,7 +83,12 @@ const CONFIG = {
   // Context Content (Next Meeting)
   NEXT_MEETING_TITLE: "Excel For Business Mastery - Session 2",
   NEXT_MEETING_DATE_LABEL: "TOMORROW at 10:00 AM prompt",
-  NEXT_MEETING_EMAIL_SUBJECT: "TOMORROW: Excel For Business Mastery, Session 2 is Happening! 🚀"
+  NEXT_MEETING_EMAIL_SUBJECT: "TOMORROW: Excel For Business Mastery, Session 2 is Happening! 🚀",
+
+  // Context Content (Session 3 Reminder)
+  SESSION_3_TITLE: "Excel For Business Mastery - Session 3",
+  SESSION_3_DATE_LABEL: "TOMORROW — Saturday, 18 April 2026 at 11:00 AM",
+  SESSION_3_EMAIL_SUBJECT: "TOMORROW at 11AM: Excel For Business Mastery, Session 3! 🚀"
 };
 
 /** =========================
@@ -534,15 +539,85 @@ function sendSession2ThankYouEmail_(toEmail, fullName, context) {
   });
 }
 
+/** 6. Session 3 Reminder Template */
+function sendSession3ReminderEmail_(toEmail, fullName, context) {
+  const safeName = escapeHtml_(fullName);
+  const subject = CONFIG.SESSION_3_EMAIL_SUBJECT;
+
+  const textBody =
+    `Hi ${fullName},\n\nQuick reminder — ${CONFIG.SESSION_3_TITLE} is happening ${CONFIG.SESSION_3_DATE_LABEL}!\n\n` +
+    `Join here: ${CONFIG.EVENT_JOIN_LINK}\n\n` +
+    `In case you need to review the previous session:\n` +
+    `Session 2 Resources: ${CONFIG.SESSION_2_RESOURCE_LINK}\n` +
+    `Session 2 Recording (Part 1): ${CONFIG.SESSION_2_RECORDING_1_LINK}\n` +
+    `Session 2 Recording (Part 2): ${CONFIG.SESSION_2_RECORDING_2_LINK}\n\n` +
+    `See you tomorrow!\n\nWarm regards,\n${CONFIG.FROM_NAME}`;
+
+  const htmlBody = `
+  <div style="background:#f3f5ff;padding:24px 0;">
+    <table align="center" width="600" style="width:600px;background:#ffffff;border-radius:16px;border:1px solid rgba(15,23,42,.10);">
+      <tr>
+        <td style="background:linear-gradient(135deg, ${CONFIG.BRAND_PRIMARY}, ${CONFIG.BRAND_INK});padding:18px 22px;">
+          <table width="100%">
+            <tr>
+              <td width="56" valign="middle"><img src="cid:logo_image" width="46" style="border-radius:12px;background:#fff;padding:6px;"></td>
+              <td valign="middle" style="padding-left:12px;">
+                <div style="color:#ffffff;font-family:Arial,sans-serif;font-weight:800;font-size:16px;">The Market Masters (TMM)</div>
+                <div style="color:rgba(255,255,255,.86);font-family:Arial,sans-serif;font-size:12.5px;">Session 3 Reminder</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:26px 22px 10px 22px;font-family:Arial,sans-serif;font-size:15px;color:#0f172a;line-height:1.7;">
+          <p>Hi <strong>${safeName}</strong>,</p>
+          <p>This is a quick reminder that <strong>${CONFIG.SESSION_3_TITLE}</strong> is happening <strong>${CONFIG.SESSION_3_DATE_LABEL}</strong>! We're excited to continue this journey with you.</p>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};">
+            <div style="font-weight:800;margin-bottom:6px;">📅 Join Tomorrow's Session</div>
+            <div>Click the button below to enter the Google Meet at the scheduled time.</div>
+            <a href="${CONFIG.EVENT_JOIN_LINK}" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-top:10px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Join The Session →</a>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">📚 Session 2 Catch-up Resources</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">Review or catch up on the previous session before tomorrow's class.</div>
+            <a href="${CONFIG.SESSION_2_RESOURCE_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Practice File →</a>
+            <div style="margin-top:6px;">
+              <a href="${CONFIG.SESSION_2_RECORDING_1_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:8px 14px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:8px;font-family:Arial,sans-serif;font-weight:700;font-size:12px;">Recording Part 1</a>
+              <a href="${CONFIG.SESSION_2_RECORDING_2_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:8px 14px;color:#fff;margin-bottom:8px;text-decoration:none;border-radius:8px;font-family:Arial,sans-serif;font-weight:700;font-size:12px;">Recording Part 2</a>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px 22px 22px;font-family:Arial,sans-serif;font-size:12.5px;color:rgba(15,23,42,.70);border-top:1px solid rgba(15,23,42,.10);">
+          Need help? <a href="mailto:${CONFIG.ADMIN_EMAIL}" style="color:${CONFIG.BRAND_INK};font-weight:800;">${CONFIG.ADMIN_EMAIL}</a><br><br>
+          <strong>${CONFIG.FROM_NAME}</strong> • <a href="${CONFIG.WEBSITE_URL}" style="color:${CONFIG.BRAND_INK};">${CONFIG.WEBSITE_URL}</a>
+        </td>
+      </tr>
+    </table>
+    ${context.pixelHtml || ""}
+  </div>`;
+
+  const mailOptions = {
+    to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody
+  };
+  if (context.logoBlob) mailOptions.inlineImages = { logo_image: context.logoBlob };
+  MailApp.sendEmail(mailOptions);
+}
+
 /**
- * 5. TEMPLATE ROUTING MAP
+ * 6. TEMPLATE ROUTING MAP
  * Maps template names to their respective functions above.
  */
 const EMAIL_TEMPLATES = {
   "session1": sendSession1ThankYouEmail_,
   "session2_thanks": sendSession2ThankYouEmail_,
   "event": sendEventMail_,
-  "next_meeting": sendNextMeetingReminderMail_
+  "next_meeting": sendNextMeetingReminderMail_,
+  "session3_reminder": sendSession3ReminderEmail_
 };
 
 
@@ -679,6 +754,17 @@ function sendSession2ThankYouBatch() {
   });
 }
 
+/** RUN THIS: Session 3 Reminder (Tomorrow — Saturday, 18 April 2026 at 11:00 AM) */
+function sendSession3ReminderBatch() {
+  sendCampaignEmailBatch_({
+    baseColumnName: "Session 3 Reminder",
+    batchLimit: 100,
+    resend: false,
+    templateName: "session3_reminder",
+    fileIds: { logoId: CONFIG.LOGO_FILE_ID }
+  });
+}
+
 /** 
  * TEST FUNCTION: Send a test of the Next Meeting Reminder to the Admin Email 
  * Run this to preview how the email looks before sending the batch.
@@ -719,6 +805,25 @@ function testSession2ThankYou() {
 
   sendSession2ThankYouEmail_(adminEmail, "Test Admin User", context);
   Logger.log("Test email sent successfully! Check your inbox.");
+}
+
+/**
+ * TEST FUNCTION: Send a test of the Session 3 Reminder to the Admin Email
+ * Run this to preview how the email looks before sending the batch.
+ */
+function testSession3Reminder() {
+  const adminEmail = Session.getActiveUser().getEmail() || CONFIG.ADMIN_EMAIL;
+  Logger.log("Sending test Session 3 Reminder email to: " + adminEmail);
+
+  const context = {};
+  if (CONFIG.LOGO_FILE_ID) {
+    try {
+      context.logoBlob = DriveApp.getFileById(CONFIG.LOGO_FILE_ID).getBlob().setName("logo_image");
+    } catch(e) { Logger.log("Could not load logo: " + e.message); }
+  }
+
+  sendSession3ReminderEmail_(adminEmail, "Test Admin User", context);
+  Logger.log("Test Session 3 Reminder sent! Check your inbox.");
 }
 
 
