@@ -74,6 +74,15 @@ const CONFIG = {
   SESSION_2_RECORDING_1_LINK: "https://drive.google.com/file/d/1HsLHtobLCUEI3bdyt_aJITJ_ox6VGofG/view?usp=sharing",
   SESSION_2_RECORDING_2_LINK: "https://drive.google.com/file/d/1N3YZf4XBNDniXJWJzcw4v203RL0yX8lf/view?usp=sharing",
 
+  // Context Links (Session 3)
+  SESSION_3_RECORDING_1_LINK: "https://drive.google.com/file/d/1I1956bK2hfMY3TEpBhGRjOe5m8Rb3iT9/view?usp=sharing",
+  SESSION_3_RECORDING_2_LINK: "https://drive.google.com/file/d/1LULh6eSwlO6kFnqV0lJDb950dJWFstsG/view?usp=sharing",
+
+  // Context Links (Assignments)
+  ASSIGNMENT_LINK: "https://drive.google.com/file/d/1gt0K9GvMMjVHIGwI6yfcs6lvasybjEBi/view?usp=sharing",
+  EXCEL_DOWNLOAD_LINK: "https://drive.google.com/file/d/1e7WfC03wEnauQviOsAZS8HEDqy-WsVgQ/view?usp=drivesdk",
+  ASSIGNMENT_EMAIL_SUBJECT: "Action Required: Class Assignment & Excel Installation 🚀",
+
   // Context Content (Events)
   EVENT_TITLE: "Excel For Business Mastery",
   EVENT_DATE_LABEL: "TODAY",
@@ -608,6 +617,132 @@ function sendSession3ReminderEmail_(toEmail, fullName, context) {
   MailApp.sendEmail(mailOptions);
 }
 
+/** 7. Session 3 Thank You Template */
+function sendSession3ThankYouEmail_(toEmail, fullName, context) {
+  const safeName = escapeHtml_(fullName);
+  const subject = "Thank you for attending Session 3! 🚀";
+
+  const textBody =
+    `Hi ${fullName},\n\nThank you for joining us for Session 3 of Excel for Business Mastery! We hope you found the session insightful.\n\n` +
+    `Session Recordings:\n- Part 1: ${CONFIG.SESSION_3_RECORDING_1_LINK}\n- Part 2: ${CONFIG.SESSION_3_RECORDING_2_LINK}\n\n` +
+    `Keep practicing and see you in the next session!\n\n` +
+    `Warm regards,\n${CONFIG.FROM_NAME}`;
+
+  const htmlBody = `
+  <div style="background:#f3f5ff;padding:24px 0;">
+    <table align="center" width="600" style="width:600px;background:#ffffff;border-radius:16px;border:1px solid rgba(15,23,42,.10);">
+      <tr>
+        <td style="background:linear-gradient(135deg, ${CONFIG.BRAND_PRIMARY}, ${CONFIG.BRAND_INK});padding:18px 22px;">
+          <table width="100%">
+            <tr>
+              <td width="56" valign="middle"><img src="cid:logo_image" width="46" style="border-radius:12px;background:#fff;padding:6px;"></td>
+              <td valign="middle" style="padding-left:12px;">
+                <div style="color:#ffffff;font-family:Arial,sans-serif;font-weight:800;font-size:16px;">The Market Masters (TMM)</div>
+                <div style="color:rgba(255,255,255,.86);font-family:Arial,sans-serif;font-size:12.5px;">Session 3 Recap</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:26px 22px 10px 22px;font-family:Arial,sans-serif;font-size:15px;color:#0f172a;line-height:1.7;">
+          <p>Hi <strong>${safeName}</strong>,</p>
+          <p>Thank you for joining us for <strong>Session 3 of Excel for Business Mastery</strong>. We hope you're feeling more confident with your data skills!</p>
+          
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">Session Resources</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">Access the session recordings below.</div>
+            
+            <div style="margin-top:10px;">
+              <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Watch Recordings:</div>
+              <a href="${CONFIG.SESSION_3_RECORDING_1_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:8px 14px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:8px;font-family:Arial,sans-serif;font-weight:700;font-size:12px;">Recording Part 1</a>
+              <a href="${CONFIG.SESSION_3_RECORDING_2_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:8px 14px;color:#fff;margin-bottom:8px;text-decoration:none;border-radius:8px;font-family:Arial,sans-serif;font-weight:700;font-size:12px;">Recording Part 2</a>
+            </div>
+          </div>
+
+          <p>Keep practicing, and don't hesitate to reach out in the WhatsApp group if you have any questions.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px 22px 22px;font-family:Arial,sans-serif;font-size:12.5px;color:rgba(15,23,42,.70);border-top:1px solid rgba(15,23,42,.10);">
+          Need help? <a href="mailto:${CONFIG.ADMIN_EMAIL}" style="color:${CONFIG.BRAND_INK};font-weight:800;">${CONFIG.ADMIN_EMAIL}</a><br><br>
+          <strong>${CONFIG.FROM_NAME}</strong> • <a href="${CONFIG.WEBSITE_URL}" style="color:${CONFIG.BRAND_INK};">${CONFIG.WEBSITE_URL}</a>
+        </td>
+      </tr>
+    </table>
+    ${context.pixelHtml || ""}
+  </div>`;
+
+  MailApp.sendEmail({
+    to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody,
+    inlineImages: context.logoBlob ? { logo_image: context.logoBlob } : undefined
+  });
+}
+
+/** 8. Assignment Email Template */
+function sendAssignmentEmail_(toEmail, fullName, context) {
+  const safeName = escapeHtml_(fullName);
+  const subject = CONFIG.ASSIGNMENT_EMAIL_SUBJECT;
+
+  const textBody =
+    `Hi ${fullName},\n\nWe have a new assignment for you to complete and submit on or before our next class.\n\n` +
+    `Assignment Link:\n${CONFIG.ASSIGNMENT_LINK}\n\n` +
+    `For Windows users who need Microsoft Excel, you can download a version here:\n${CONFIG.EXCEL_DOWNLOAD_LINK}\n\n` +
+    `Keep practicing and see you in the next session!\n\n` +
+    `Warm regards,\n${CONFIG.FROM_NAME}`;
+
+  const htmlBody = `
+  <div style="background:#f3f5ff;padding:24px 0;">
+    <table align="center" width="600" style="width:600px;background:#ffffff;border-radius:16px;border:1px solid rgba(15,23,42,.10);">
+      <tr>
+        <td style="background:linear-gradient(135deg, ${CONFIG.BRAND_PRIMARY}, ${CONFIG.BRAND_INK});padding:18px 22px;">
+          <table width="100%">
+            <tr>
+              <td width="56" valign="middle"><img src="cid:logo_image" width="46" style="border-radius:12px;background:#fff;padding:6px;"></td>
+              <td valign="middle" style="padding-left:12px;">
+                <div style="color:#ffffff;font-family:Arial,sans-serif;font-weight:800;font-size:16px;">The Market Masters (TMM)</div>
+                <div style="color:rgba(255,255,255,.86);font-family:Arial,sans-serif;font-size:12.5px;">Action Required</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:26px 22px 10px 22px;font-family:Arial,sans-serif;font-size:15px;color:#0f172a;line-height:1.7;">
+          <p>Hi <strong>${safeName}</strong>,</p>
+          <p>To ensure we lock in the concepts from our sessions, we have a new assignment for you. Please kindly complete and submit it <strong>on or before our next class</strong>.</p>
+          
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">Class Assignment</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">Access the assignment brief using the link below.</div>
+            <a href="${CONFIG.ASSIGNMENT_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">View Assignment →</a>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">Need Microsoft Excel?</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">If you are using a Windows PC and don't have Excel installed, you can download a copy here:</div>
+            <a href="${CONFIG.EXCEL_DOWNLOAD_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:10px 16px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Download Excel (Windows) →</a>
+          </div>
+          
+          <p>Keep practicing, and don't hesitate to reach out in the WhatsApp group if you have any questions.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px 22px 22px;font-family:Arial,sans-serif;font-size:12.5px;color:rgba(15,23,42,.70);border-top:1px solid rgba(15,23,42,.10);">
+          Need help? <a href="mailto:${CONFIG.ADMIN_EMAIL}" style="color:${CONFIG.BRAND_INK};font-weight:800;">${CONFIG.ADMIN_EMAIL}</a><br><br>
+          <strong>${CONFIG.FROM_NAME}</strong> • <a href="${CONFIG.WEBSITE_URL}" style="color:${CONFIG.BRAND_INK};">${CONFIG.WEBSITE_URL}</a>
+        </td>
+      </tr>
+    </table>
+    ${context.pixelHtml || ""}
+  </div>`;
+
+  MailApp.sendEmail({
+    to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody,
+    inlineImages: context.logoBlob ? { logo_image: context.logoBlob } : undefined
+  });
+}
+
 /**
  * 6. TEMPLATE ROUTING MAP
  * Maps template names to their respective functions above.
@@ -617,7 +752,9 @@ const EMAIL_TEMPLATES = {
   "session2_thanks": sendSession2ThankYouEmail_,
   "event": sendEventMail_,
   "next_meeting": sendNextMeetingReminderMail_,
-  "session3_reminder": sendSession3ReminderEmail_
+  "session3_reminder": sendSession3ReminderEmail_,
+  "session3_thanks": sendSession3ThankYouEmail_,
+  "assignment": sendAssignmentEmail_
 };
 
 
@@ -765,6 +902,28 @@ function sendSession3ReminderBatch() {
   });
 }
 
+/** RUN THIS: Session 3 Thank You */
+function sendSession3ThankYouBatch() {
+  sendCampaignEmailBatch_({
+    baseColumnName: "Session 3 Thank You", 
+    batchLimit: 100,
+    resend: false,
+    templateName: "session3_thanks",
+    fileIds: { logoId: CONFIG.LOGO_FILE_ID } 
+  });
+}
+
+/** RUN THIS: Class Assignment */
+function sendAssignmentBatch() {
+  sendCampaignEmailBatch_({
+    baseColumnName: "Assignment", 
+    batchLimit: 100,
+    resend: false,
+    templateName: "assignment",
+    fileIds: { logoId: CONFIG.LOGO_FILE_ID } 
+  });
+}
+
 /** 
  * TEST FUNCTION: Send a test of the Next Meeting Reminder to the Admin Email 
  * Run this to preview how the email looks before sending the batch.
@@ -826,6 +985,41 @@ function testSession3Reminder() {
   Logger.log("Test Session 3 Reminder sent! Check your inbox.");
 }
 
+/** 
+ * TEST FUNCTION: Send a test of the Session 3 Thank You to the Admin Email 
+ */
+function testSession3ThankYou() {
+  const adminEmail = Session.getActiveUser().getEmail() || CONFIG.ADMIN_EMAIL;
+  Logger.log("Sending test Session 3 Thank You email to: " + adminEmail);
+  
+  const context = {};
+  if (CONFIG.LOGO_FILE_ID) {
+    try {
+      context.logoBlob = DriveApp.getFileById(CONFIG.LOGO_FILE_ID).getBlob().setName("logo_image");
+    } catch(e) { Logger.log("Could not load logo: " + e.message); }
+  }
+
+  sendSession3ThankYouEmail_(adminEmail, "Test Admin User", context);
+  Logger.log("Test Session 3 Thank You sent! Check your inbox.");
+}
+
+/** 
+ * TEST FUNCTION: Send a test of the Assignment to the Admin Email 
+ */
+function testAssignment() {
+  const adminEmail = Session.getActiveUser().getEmail() || CONFIG.ADMIN_EMAIL;
+  Logger.log("Sending test Assignment email to: " + adminEmail);
+  
+  const context = {};
+  if (CONFIG.LOGO_FILE_ID) {
+    try {
+      context.logoBlob = DriveApp.getFileById(CONFIG.LOGO_FILE_ID).getBlob().setName("logo_image");
+    } catch(e) { Logger.log("Could not load logo: " + e.message); }
+  }
+
+  sendAssignmentEmail_(adminEmail, "Test Admin User", context);
+  Logger.log("Test Assignment sent! Check your inbox.");
+}
 
 /** =========================
  * G. UTILITY HELPERS
@@ -843,7 +1037,8 @@ function updateSheetHeaders() {
     "Session 3 Reminder", "Session 3 Thank You",
     "Session 4 Reminder", "Session 4 Thank You",
     "Session 5 Reminder", "Session 5 Thank You",
-    "Session 6 Reminder", "Session 6 Thank You"
+    "Session 6 Reminder", "Session 6 Thank You",
+    "Assignment"
   ];
   
   columns.forEach(c => {
