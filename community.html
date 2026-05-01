@@ -687,6 +687,98 @@
     </div>
   </div>
 </div>
+
+  <!-- =========================================================
+       REVIEW MODAL
+       ========================================================= -->
+  <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <div class="smallcaps mb-1">Session Feedback</div>
+            <h2 class="h4 fw-bold mb-0" id="reviewModalTitle">We value your feedback</h2>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close review form"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="mb-4 text-muted-2">
+            Please take a moment to review the sessions and tutor. Your feedback helps us improve and serve you better!
+          </p>
+          <form id="reviewForm" novalidate>
+            <input type="hidden" name="formType" value="review">
+            
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="revFullName">Full Name</label>
+                <input id="revFullName" class="form-control form-control-lg" name="fullName" required placeholder="Your Name" autocomplete="name">
+                <div class="field-error d-none" data-error-for="fullName" style="color:#b42318; font-size:.85rem; margin-top:.35rem;"></div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="revEmail">Email Address</label>
+                <input id="revEmail" class="form-control form-control-lg" name="email" type="email" required placeholder="you@email.com" autocomplete="email">
+                <div class="field-error d-none" data-error-for="email" style="color:#b42318; font-size:.85rem; margin-top:.35rem;"></div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="revSessionRating">Overall value of the sessions?</label>
+                <select id="revSessionRating" class="form-select form-select-lg" name="sessionRating" required>
+                  <option value="" selected disabled>Select rating...</option>
+                  <option>Excellent</option>
+                  <option>Good</option>
+                  <option>Average</option>
+                  <option>Needs Improvement</option>
+                </select>
+                <div class="field-error d-none" data-error-for="sessionRating" style="color:#b42318; font-size:.85rem; margin-top:.35rem;"></div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="revTutorRating">Tutor's delivery and clarity?</label>
+                <select id="revTutorRating" class="form-select form-select-lg" name="tutorRating" required>
+                  <option value="" selected disabled>Select rating...</option>
+                  <option>Excellent</option>
+                  <option>Good</option>
+                  <option>Average</option>
+                  <option>Needs Improvement</option>
+                </select>
+                <div class="field-error d-none" data-error-for="tutorRating" style="color:#b42318; font-size:.85rem; margin-top:.35rem;"></div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label" for="revMostValuable">What was the most valuable thing you learned so far?</label>
+                <textarea id="revMostValuable" class="form-control form-control-lg" name="mostValuable" rows="3" required placeholder="Type your answer here..."></textarea>
+                <div class="field-error d-none" data-error-for="mostValuable" style="color:#b42318; font-size:.85rem; margin-top:.35rem;"></div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label" for="revImprovement">What could we improve in the remaining sessions?</label>
+                <textarea id="revImprovement" class="form-control form-control-lg" name="improvementFeedback" rows="3" required placeholder="Type your answer here..."></textarea>
+                <div class="field-error d-none" data-error-for="improvementFeedback" style="color:#b42318; font-size:.85rem; margin-top:.35rem;"></div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+              <button type="submit" class="btn btn-primary" id="revSubmitBtn">
+                Submit Review <i class="bi bi-send ms-1"></i>
+              </button>
+            </div>
+
+            <div class="mt-3">
+              <div class="text-muted-2 small d-none" id="revLoading">Submitting... please wait.</div>
+              <div class="alert alert-success d-none" id="revSuccess">
+                <strong>Thank you!</strong> Your feedback has been received.
+              </div>
+              <div class="alert alert-danger d-none" id="revError">
+                <strong>Oops.</strong> Something went wrong. Please try again.
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- FOOTER (same style as your other pages) -->
   <footer class="py-5">
     <div class="container">
@@ -791,7 +883,7 @@
      *  - Access: Anyone
      *  - URL must end in /exec
      */
-    const COMMUNITY_API_URL = "https://script.google.com/macros/s/AKfycbxR8QvrIVKPz5s6s4IryCXTUXQg37JPrd7v-ZsLm39UqxkGCHt-M5YrFakN2gCrzpiw/exec";
+    const COMMUNITY_API_URL = "https://script.google.com/macros/s/AKfycbxYt_351xCJ16QYGCBL3Uw5Ji9ebj0-zyj0q1asxDyWrs2PtjXmdC1OtCBp8xjHVP22/exec";
 
     (function () {
       "use strict";
@@ -1029,6 +1121,111 @@
 
       // Init
       setStep(1);
+    })();
+
+    /**
+     * REVIEW MODAL HANDLER
+     */
+    (function () {
+      "use strict";
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const action = urlParams.get('action');
+
+      const reviewModalEl = document.getElementById("reviewModal");
+      const form = document.getElementById("reviewForm");
+      if (!reviewModalEl || !form) return;
+
+      // Auto-open if URL has ?action=review
+      if (action === 'review') {
+        const reviewModalInstance = new bootstrap.Modal(reviewModalEl);
+        reviewModalInstance.show();
+      }
+
+      const btnSubmit = document.getElementById("revSubmitBtn");
+      const loading = document.getElementById("revLoading");
+      const success = document.getElementById("revSuccess");
+      const error = document.getElementById("revError");
+
+      const clearErrors = () => {
+        reviewModalEl.querySelectorAll(".field-error").forEach((e) => {
+          e.textContent = "";
+          e.classList.add("d-none");
+        });
+      };
+
+      const showError = (name, msg) => {
+        const el = reviewModalEl.querySelector(`[data-error-for="${name}"]`);
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.remove("d-none");
+      };
+
+      const validateForm = () => {
+        clearErrors();
+        let ok = true;
+        const requiredFields = [...form.querySelectorAll("[required]")];
+
+        requiredFields.forEach((field) => {
+          const value = (field.value || "").trim();
+          if (!value) {
+            ok = false;
+            showError(field.name, "This is required.");
+            return;
+          }
+          if (field.type === "email") {
+            const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            if (!validEmail) {
+              ok = false;
+              showError(field.name, "Enter a valid email address.");
+            }
+          }
+        });
+        return ok;
+      };
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!validateForm()) return;
+
+        const fd = new FormData(form);
+        const payload = Object.fromEntries(fd.entries());
+
+        loading.classList.remove("d-none");
+        success.classList.add("d-none");
+        error.classList.add("d-none");
+        btnSubmit.disabled = true;
+
+        try {
+          const res = await fetch(COMMUNITY_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+          const out = await res.json();
+
+          if (out && out.ok) {
+            loading.classList.add("d-none");
+            success.classList.remove("d-none");
+            form.reset();
+            // Automatically close modal after 3 seconds
+            setTimeout(() => {
+              const inst = bootstrap.Modal.getInstance(reviewModalEl);
+              if (inst) inst.hide();
+              success.classList.add("d-none");
+            }, 3000);
+          } else {
+            throw new Error(out?.error || "Unknown error");
+          }
+        } catch (err) {
+          console.error("Review form submit error:", err);
+          loading.classList.add("d-none");
+          error.classList.remove("d-none");
+        } finally {
+          btnSubmit.disabled = false;
+        }
+      });
     })();
   </script>
 </body>

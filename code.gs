@@ -97,7 +97,18 @@ const CONFIG = {
   // Context Content (Session 3 Reminder)
   SESSION_3_TITLE: "Excel For Business Mastery - Session 3",
   SESSION_3_DATE_LABEL: "TOMORROW — Saturday, 18 April 2026 at 11:00 AM",
-  SESSION_3_EMAIL_SUBJECT: "TOMORROW at 11AM: Excel For Business Mastery, Session 3! 🚀"
+  SESSION_3_EMAIL_SUBJECT: "TOMORROW at 11AM: Excel For Business Mastery, Session 3! 🚀",
+
+  // Context Content (Session 4 Reminder & Thank You)
+  SESSION_4_TITLE: "Excel For Business Mastery - Session 4",
+  SESSION_4_DATE_LABEL: "TOMORROW — Saturday, 25 April 2026 at 11:00 AM",
+  SESSION_4_EMAIL_SUBJECT: "TOMORROW at 11AM: Excel For Business Mastery, Session 4! 🚀",
+  SESSION_4_RECORDING_LINK: "https://drive.google.com/file/d/11xG2pR9EgZFePawjcWNkD-B6vGYwFDpU/view?usp=sharing",
+
+  // Context Content (Session 5 Reminder)
+  SESSION_5_TITLE: "Excel For Business Mastery - Session 5",
+  SESSION_5_DATE_LABEL: "TOMORROW — Saturday, 2 May 2026 at 11:00 AM",
+  SESSION_5_EMAIL_SUBJECT: "TOMORROW at 11AM: Excel For Business Mastery, Session 5! 🚀"
 };
 
 /** =========================
@@ -111,6 +122,31 @@ function doPost(e) {
     // Honeypot anti-bot
     if (body.website && String(body.website).trim() !== "") {
       return json_({ ok: true, ignored: true });
+    }
+
+    if (body.formType === "review") {
+      const requiredReview = ["fullName", "email", "sessionRating", "tutorRating", "mostValuable", "improvementFeedback"];
+      const missingReview = requiredReview.filter((k) => !body[k] || String(body[k]).trim() === "");
+      if (missingReview.length) {
+        return json_({ ok: false, error: "Missing required fields: " + missingReview.join(", ") });
+      }
+
+      const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+      let sheet = ss.getSheetByName("Reviews") || ss.insertSheet("Reviews");
+      
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow(["Timestamp", "Full Name", "Email", "Session Rating", "Tutor Rating", "Most Valuable Lesson", "Improvement Feedback"]);
+        sheet.getRange(1, 1, 1, 7).setFontWeight("bold");
+        sheet.setFrozenRows(1);
+      }
+
+      sheet.appendRow([
+        new Date(), body.fullName, body.email, 
+        body.sessionRating, body.tutorRating, 
+        body.mostValuable, body.improvementFeedback
+      ]);
+      
+      return json_({ ok: true });
     }
 
     // Validate required fields
@@ -743,6 +779,224 @@ function sendAssignmentEmail_(toEmail, fullName, context) {
   });
 }
 
+/** 9. Session 4 Reminder Template */
+function sendSession4ReminderEmail_(toEmail, fullName, context) {
+  const safeName = escapeHtml_(fullName);
+  const subject = CONFIG.SESSION_4_EMAIL_SUBJECT;
+
+  const textBody =
+    `Hi ${fullName},\n\nQuick reminder — ${CONFIG.SESSION_4_TITLE} is happening ${CONFIG.SESSION_4_DATE_LABEL}!\n\n` +
+    `Join here: ${CONFIG.EVENT_JOIN_LINK}\n\n` +
+    `In case you need to review the previous session:\n` +
+    `Session 3 Recording (Part 1): ${CONFIG.SESSION_3_RECORDING_1_LINK}\n` +
+    `Session 3 Recording (Part 2): ${CONFIG.SESSION_3_RECORDING_2_LINK}\n\n` +
+    `We'd love your feedback! Please take a moment to review the sessions so far:\n` +
+    `Leave a Review: https://themarketmasters.com.ng/community.html?action=review\n\n` +
+    `See you tomorrow!\n\nWarm regards,\n${CONFIG.FROM_NAME}`;
+
+  const htmlBody = `
+  <div style="background:#f3f5ff;padding:24px 0;">
+    <table align="center" width="600" style="width:600px;background:#ffffff;border-radius:16px;border:1px solid rgba(15,23,42,.10);">
+      <tr>
+        <td style="background:linear-gradient(135deg, ${CONFIG.BRAND_PRIMARY}, ${CONFIG.BRAND_INK});padding:18px 22px;">
+          <table width="100%">
+            <tr>
+              <td width="56" valign="middle"><img src="cid:logo_image" width="46" style="border-radius:12px;background:#fff;padding:6px;"></td>
+              <td valign="middle" style="padding-left:12px;">
+                <div style="color:#ffffff;font-family:Arial,sans-serif;font-weight:800;font-size:16px;">The Market Masters (TMM)</div>
+                <div style="color:rgba(255,255,255,.86);font-family:Arial,sans-serif;font-size:12.5px;">Session 4 Reminder</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:26px 22px 10px 22px;font-family:Arial,sans-serif;font-size:15px;color:#0f172a;line-height:1.7;">
+          <p>Hi <strong>${safeName}</strong>,</p>
+          <p>This is a quick reminder that <strong>${CONFIG.SESSION_4_TITLE}</strong> is happening <strong>${CONFIG.SESSION_4_DATE_LABEL}</strong>! We're excited to continue this journey with you.</p>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};">
+            <div style="font-weight:800;margin-bottom:6px;">📅 Join Tomorrow's Session</div>
+            <div>Click the button below to enter the Google Meet at the scheduled time.</div>
+            <a href="${CONFIG.EVENT_JOIN_LINK}" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-top:10px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Join The Session →</a>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">📝 Pending Assignment</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">Don't forget to complete and submit your assignment before class!</div>
+            <a href="${CONFIG.ASSIGNMENT_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">View Assignment →</a>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">📚 Session 3 Catch-up Resources</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">Review or catch up on the previous session before tomorrow's class.</div>
+            <div style="margin-top:6px;">
+              <a href="${CONFIG.SESSION_3_RECORDING_1_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:8px 14px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:8px;font-family:Arial,sans-serif;font-weight:700;font-size:12px;">Recording Part 1</a>
+              <a href="${CONFIG.SESSION_3_RECORDING_2_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:8px 14px;color:#fff;margin-bottom:8px;text-decoration:none;border-radius:8px;font-family:Arial,sans-serif;font-weight:700;font-size:12px;">Recording Part 2</a>
+            </div>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">⭐ We'd love your feedback!</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">We want to ensure you're getting the best possible experience. Please take 2 minutes to share your honest feedback on the sessions and the tutor so far.</div>
+            <a href="https://themarketmasters.com.ng/community.html?action=review" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Leave a Quick Review →</a>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px 22px 22px;font-family:Arial,sans-serif;font-size:12.5px;color:rgba(15,23,42,.70);border-top:1px solid rgba(15,23,42,.10);">
+          Need help? <a href="mailto:${CONFIG.ADMIN_EMAIL}" style="color:${CONFIG.BRAND_INK};font-weight:800;">${CONFIG.ADMIN_EMAIL}</a><br><br>
+          <strong>${CONFIG.FROM_NAME}</strong> • <a href="${CONFIG.WEBSITE_URL}" style="color:${CONFIG.BRAND_INK};">${CONFIG.WEBSITE_URL}</a>
+        </td>
+      </tr>
+    </table>
+    ${context.pixelHtml || ""}
+  </div>`;
+
+  const mailOptions = {
+    to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody
+  };
+  if (context.logoBlob) mailOptions.inlineImages = { logo_image: context.logoBlob };
+  MailApp.sendEmail(mailOptions);
+}
+
+/** 10. Session 4 Thank You Template */
+function sendSession4ThankYouEmail_(toEmail, fullName, context) {
+  const safeName = escapeHtml_(fullName);
+  const subject = "Thank you for attending Session 4! + Leave a Review ⭐";
+
+  const textBody =
+    `Hi ${fullName},\n\nThank you for joining us for Session 4 of Excel for Business Mastery! We hope you found the session insightful.\n\n` +
+    `We want to make sure you're getting the best possible experience, so we'd love to hear your feedback on the sessions and the tutor so far.\n\n` +
+    `Leave a Quick Review here:\nhttps://themarketmasters.com.ng/community.html?action=review\n\n` +
+    `Session 4 Recording:\n${CONFIG.SESSION_4_RECORDING_LINK}\n\n` +
+    `Keep practicing and see you in the next session!\n\n` +
+    `Warm regards,\n${CONFIG.FROM_NAME}`;
+
+  const htmlBody = `
+  <div style="background:#f3f5ff;padding:24px 0;">
+    <table align="center" width="600" style="width:600px;background:#ffffff;border-radius:16px;border:1px solid rgba(15,23,42,.10);">
+      <tr>
+        <td style="background:linear-gradient(135deg, ${CONFIG.BRAND_PRIMARY}, ${CONFIG.BRAND_INK});padding:18px 22px;">
+          <table width="100%">
+            <tr>
+              <td width="56" valign="middle"><img src="cid:logo_image" width="46" style="border-radius:12px;background:#fff;padding:6px;"></td>
+              <td valign="middle" style="padding-left:12px;">
+                <div style="color:#ffffff;font-family:Arial,sans-serif;font-weight:800;font-size:16px;">The Market Masters (TMM)</div>
+                <div style="color:rgba(255,255,255,.86);font-family:Arial,sans-serif;font-size:12.5px;">Session 4 Recap & Feedback</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:26px 22px 10px 22px;font-family:Arial,sans-serif;font-size:15px;color:#0f172a;line-height:1.7;">
+          <p>Hi <strong>${safeName}</strong>,</p>
+          <p>Thank you for joining us for <strong>Session 4 of Excel for Business Mastery</strong>. We hope you're feeling more confident with your data skills!</p>
+          
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">⭐ We'd love your feedback!</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">We want to ensure you're getting the best possible experience. Please take 2 minutes to share your honest feedback on the sessions and the tutor so far. This helps us make decisions on how to progress.</div>
+            
+            <a href="https://themarketmasters.com.ng/community.html?action=review" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Leave a Quick Review →</a>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">📹 Session 4 Recording</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">Missed something? Watch the replay of Session 4 below.</div>
+            <a href="${CONFIG.SESSION_4_RECORDING_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:10px 16px;color:#fff;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Watch Recording →</a>
+          </div>
+
+          <p>Keep practicing, and don't hesitate to reach out in the WhatsApp group if you have any questions.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px 22px 22px;font-family:Arial,sans-serif;font-size:12.5px;color:rgba(15,23,42,.70);border-top:1px solid rgba(15,23,42,.10);">
+          Need help? <a href="mailto:${CONFIG.ADMIN_EMAIL}" style="color:${CONFIG.BRAND_INK};font-weight:800;">${CONFIG.ADMIN_EMAIL}</a><br><br>
+          <strong>${CONFIG.FROM_NAME}</strong> • <a href="${CONFIG.WEBSITE_URL}" style="color:${CONFIG.BRAND_INK};">${CONFIG.WEBSITE_URL}</a>
+        </td>
+      </tr>
+    </table>
+    ${context.pixelHtml || ""}
+  </div>`;
+
+  MailApp.sendEmail({
+    to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody,
+    inlineImages: context.logoBlob ? { logo_image: context.logoBlob } : undefined
+  });
+}
+
+/** 11. Session 5 Reminder Template */
+function sendSession5ReminderEmail_(toEmail, fullName, context) {
+  const safeName = escapeHtml_(fullName);
+  const subject = CONFIG.SESSION_5_EMAIL_SUBJECT;
+
+  const textBody =
+    `Hi ${fullName},\n\nQuick reminder — ${CONFIG.SESSION_5_TITLE} is happening ${CONFIG.SESSION_5_DATE_LABEL}!\n\n` +
+    `Join here: ${CONFIG.EVENT_JOIN_LINK}\n\n` +
+    `In case you need to review the previous session:\n` +
+    `Session 4 Recording: ${CONFIG.SESSION_4_RECORDING_LINK}\n\n` +
+    `We'd love your feedback! Please take a moment to review the sessions so far:\n` +
+    `Leave a Review: https://themarketmasters.com.ng/community.html?action=review\n\n` +
+    `See you tomorrow!\n\nWarm regards,\n${CONFIG.FROM_NAME}`;
+
+  const htmlBody = `
+  <div style="background:#f3f5ff;padding:24px 0;">
+    <table align="center" width="600" style="width:600px;background:#ffffff;border-radius:16px;border:1px solid rgba(15,23,42,.10);">
+      <tr>
+        <td style="background:linear-gradient(135deg, ${CONFIG.BRAND_PRIMARY}, ${CONFIG.BRAND_INK});padding:18px 22px;">
+          <table width="100%">
+            <tr>
+              <td width="56" valign="middle"><img src="cid:logo_image" width="46" style="border-radius:12px;background:#fff;padding:6px;"></td>
+              <td valign="middle" style="padding-left:12px;">
+                <div style="color:#ffffff;font-family:Arial,sans-serif;font-weight:800;font-size:16px;">The Market Masters (TMM)</div>
+                <div style="color:rgba(255,255,255,.86);font-family:Arial,sans-serif;font-size:12.5px;">Session 5 Reminder</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:26px 22px 10px 22px;font-family:Arial,sans-serif;font-size:15px;color:#0f172a;line-height:1.7;">
+          <p>Hi <strong>${safeName}</strong>,</p>
+          <p>This is a quick reminder that <strong>${CONFIG.SESSION_5_TITLE}</strong> is happening <strong>${CONFIG.SESSION_5_DATE_LABEL}</strong>! We're excited to continue this journey with you.</p>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};">
+            <div style="font-weight:800;margin-bottom:6px;">📅 Join Tomorrow's Session</div>
+            <div>Click the button below to enter the Google Meet at the scheduled time.</div>
+            <a href="${CONFIG.EVENT_JOIN_LINK}" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-top:10px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Join The Session →</a>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">📚 Session 4 Catch-up Resources</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">Review or catch up on the previous session before tomorrow's class.</div>
+            <a href="${CONFIG.SESSION_4_RECORDING_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:10px 16px;color:#fff;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Watch Recording →</a>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">⭐ We'd love your feedback!</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">We want to ensure you're getting the best possible experience. Please take 2 minutes to share your honest feedback on the sessions and the tutor so far.</div>
+            <a href="https://themarketmasters.com.ng/community.html?action=review" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Leave a Quick Review →</a>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px 22px 22px;font-family:Arial,sans-serif;font-size:12.5px;color:rgba(15,23,42,.70);border-top:1px solid rgba(15,23,42,.10);">
+          Need help? <a href="mailto:${CONFIG.ADMIN_EMAIL}" style="color:${CONFIG.BRAND_INK};font-weight:800;">${CONFIG.ADMIN_EMAIL}</a><br><br>
+          <strong>${CONFIG.FROM_NAME}</strong> • <a href="${CONFIG.WEBSITE_URL}" style="color:${CONFIG.BRAND_INK};">${CONFIG.WEBSITE_URL}</a>
+        </td>
+      </tr>
+    </table>
+    ${context.pixelHtml || ""}
+  </div>`;
+
+  const mailOptions = {
+    to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody
+  };
+  if (context.logoBlob) mailOptions.inlineImages = { logo_image: context.logoBlob };
+  MailApp.sendEmail(mailOptions);
+}
+
 /**
  * 6. TEMPLATE ROUTING MAP
  * Maps template names to their respective functions above.
@@ -754,7 +1008,10 @@ const EMAIL_TEMPLATES = {
   "next_meeting": sendNextMeetingReminderMail_,
   "session3_reminder": sendSession3ReminderEmail_,
   "session3_thanks": sendSession3ThankYouEmail_,
-  "assignment": sendAssignmentEmail_
+  "assignment": sendAssignmentEmail_,
+  "session4_reminder": sendSession4ReminderEmail_,
+  "session4_thanks": sendSession4ThankYouEmail_,
+  "session5_reminder": sendSession5ReminderEmail_
 };
 
 
@@ -924,6 +1181,39 @@ function sendAssignmentBatch() {
   });
 }
 
+/** RUN THIS: Session 4 Reminder (Tomorrow — Saturday, 25 April 2026 at 11:00 AM) */
+function sendSession4ReminderBatch() {
+  sendCampaignEmailBatch_({
+    baseColumnName: "Session 4 Reminder",
+    batchLimit: 100,
+    resend: false,
+    templateName: "session4_reminder",
+    fileIds: { logoId: CONFIG.LOGO_FILE_ID }
+  });
+}
+
+/** RUN THIS: Session 4 Thank You */
+function sendSession4ThankYouBatch() {
+  sendCampaignEmailBatch_({
+    baseColumnName: "Session 4 Thank You", 
+    batchLimit: 100,
+    resend: false,
+    templateName: "session4_thanks",
+    fileIds: { logoId: CONFIG.LOGO_FILE_ID } 
+  });
+}
+
+/** RUN THIS: Session 5 Reminder (Tomorrow — Saturday, 2 May 2026 at 11:00 AM) */
+function sendSession5ReminderBatch() {
+  sendCampaignEmailBatch_({
+    baseColumnName: "Session 5 Reminder",
+    batchLimit: 100,
+    resend: false,
+    templateName: "session5_reminder",
+    fileIds: { logoId: CONFIG.LOGO_FILE_ID }
+  });
+}
+
 /** 
  * TEST FUNCTION: Send a test of the Next Meeting Reminder to the Admin Email 
  * Run this to preview how the email looks before sending the batch.
@@ -1019,6 +1309,62 @@ function testAssignment() {
 
   sendAssignmentEmail_(adminEmail, "Test Admin User", context);
   Logger.log("Test Assignment sent! Check your inbox.");
+}
+
+/**
+ * TEST FUNCTION: Send a test of the Session 4 Reminder to the Admin Email
+ * Run this to preview how the email looks before sending the batch.
+ */
+function testSession4Reminder() {
+  const adminEmail = Session.getActiveUser().getEmail() || CONFIG.ADMIN_EMAIL;
+  Logger.log("Sending test Session 4 Reminder email to: " + adminEmail);
+
+  const context = {};
+  if (CONFIG.LOGO_FILE_ID) {
+    try {
+      context.logoBlob = DriveApp.getFileById(CONFIG.LOGO_FILE_ID).getBlob().setName("logo_image");
+    } catch(e) { Logger.log("Could not load logo: " + e.message); }
+  }
+
+  sendSession4ReminderEmail_(adminEmail, "Test Admin User", context);
+  Logger.log("Test Session 4 Reminder sent! Check your inbox.");
+}
+
+/** 
+ * TEST FUNCTION: Send a test of the Session 4 Thank You to the Admin Email 
+ */
+function testSession4ThankYou() {
+  const adminEmail = Session.getActiveUser().getEmail() || CONFIG.ADMIN_EMAIL;
+  Logger.log("Sending test Session 4 Thank You email to: " + adminEmail);
+  
+  const context = {};
+  if (CONFIG.LOGO_FILE_ID) {
+    try {
+      context.logoBlob = DriveApp.getFileById(CONFIG.LOGO_FILE_ID).getBlob().setName("logo_image");
+    } catch(e) { Logger.log("Could not load logo: " + e.message); }
+  }
+
+  sendSession4ThankYouEmail_(adminEmail, "Test Admin User", context);
+  Logger.log("Test Session 4 Thank You sent! Check your inbox.");
+}
+
+/**
+ * TEST FUNCTION: Send a test of the Session 5 Reminder to the Admin Email
+ * Run this to preview how the email looks before sending the batch.
+ */
+function testSession5Reminder() {
+  const adminEmail = Session.getActiveUser().getEmail() || CONFIG.ADMIN_EMAIL;
+  Logger.log("Sending test Session 5 Reminder email to: " + adminEmail);
+
+  const context = {};
+  if (CONFIG.LOGO_FILE_ID) {
+    try {
+      context.logoBlob = DriveApp.getFileById(CONFIG.LOGO_FILE_ID).getBlob().setName("logo_image");
+    } catch(e) { Logger.log("Could not load logo: " + e.message); }
+  }
+
+  sendSession5ReminderEmail_(adminEmail, "Test Admin User", context);
+  Logger.log("Test Session 5 Reminder sent! Check your inbox.");
 }
 
 /** =========================
