@@ -108,7 +108,8 @@ const CONFIG = {
   // Context Content (Session 5 Reminder)
   SESSION_5_TITLE: "Excel For Business Mastery - Session 5",
   SESSION_5_DATE_LABEL: "TOMORROW — Saturday, 2 May 2026 at 11:00 AM",
-  SESSION_5_EMAIL_SUBJECT: "TOMORROW at 11AM: Excel For Business Mastery, Session 5! 🚀"
+  SESSION_5_EMAIL_SUBJECT: "TOMORROW at 11AM: Excel For Business Mastery, Session 5! 🚀",
+  SESSION_5_RECORDING_LINK: "https://drive.google.com/file/d/1rlYSpJiQrJWF6wfQ9S1At4OJm8WItJf0/view?usp=sharing"
 };
 
 /** =========================
@@ -997,6 +998,77 @@ function sendSession5ReminderEmail_(toEmail, fullName, context) {
   MailApp.sendEmail(mailOptions);
 }
 
+/** 12. Session 5 Thank You Template */
+function sendSession5ThankYouEmail_(toEmail, fullName, context) {
+  const safeName = escapeHtml_(fullName);
+  const subject = "Thank you for attending Session 5! + Assignment Prep 🚀";
+
+  const textBody =
+    `Hi ${fullName},\n\nThank you for joining us for Session 5 of Excel for Business Mastery! We hope you found the session insightful.\n\n` +
+    `Session 5 Recording:\n${CONFIG.SESSION_5_RECORDING_LINK}\n\n` +
+    `As mentioned during the class, please prepare for the upcoming assignment to lock in all the concepts we've covered so far. The assignment details will be fully shared soon, so keep practicing!\n\n` +
+    `We want to make sure you're getting the best possible experience, so if you haven't yet, we'd love to hear your feedback on the sessions and the tutor so far.\n\n` +
+    `Leave a Quick Review here:\nhttps://themarketmasters.com.ng/community.html?action=review\n\n` +
+    `Warm regards,\n${CONFIG.FROM_NAME}`;
+
+  const htmlBody = `
+  <div style="background:#f3f5ff;padding:24px 0;">
+    <table align="center" width="600" style="width:600px;background:#ffffff;border-radius:16px;border:1px solid rgba(15,23,42,.10);">
+      <tr>
+        <td style="background:linear-gradient(135deg, ${CONFIG.BRAND_PRIMARY}, ${CONFIG.BRAND_INK});padding:18px 22px;">
+          <table width="100%">
+            <tr>
+              <td width="56" valign="middle"><img src="cid:logo_image" width="46" style="border-radius:12px;background:#fff;padding:6px;"></td>
+              <td valign="middle" style="padding-left:12px;">
+                <div style="color:#ffffff;font-family:Arial,sans-serif;font-weight:800;font-size:16px;">The Market Masters (TMM)</div>
+                <div style="color:rgba(255,255,255,.86);font-family:Arial,sans-serif;font-size:12.5px;">Session 5 Recap</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:26px 22px 10px 22px;font-family:Arial,sans-serif;font-size:15px;color:#0f172a;line-height:1.7;">
+          <p>Hi <strong>${safeName}</strong>,</p>
+          <p>Thank you for joining us for <strong>Session 5 of Excel for Business Mastery</strong>. We hope you're feeling more confident with your data skills!</p>
+          
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">📹 Session 5 Recording</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">Missed something? Watch the replay of Session 5 below.</div>
+            <a href="${CONFIG.SESSION_5_RECORDING_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_INK};padding:10px 16px;color:#fff;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Watch Recording →</a>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">📝 Assignment Preparation</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">As mentioned during the class, please prepare for the upcoming assignment to lock in all the concepts we've covered so far. The full assignment will be shared soon. Keep practicing!</div>
+            <a href="${CONFIG.ASSIGNMENT_LINK}" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Review Assignment Brief →</a>
+          </div>
+
+          <div style="margin:16px 0;padding:14px;border-radius:14px;background:${CONFIG.BRAND_SOFT};border:1px solid rgba(70,100,232,.20);">
+            <div style="font-weight:800;margin-bottom:6px;">⭐ We'd love your feedback!</div>
+            <div style="color:rgba(15,23,42,.86);margin-bottom:12px;">If you haven't yet, please take 2 minutes to share your honest feedback on the sessions and the tutor so far.</div>
+            <a href="https://themarketmasters.com.ng/community.html?action=review" target="_blank" rel="noreferrer" style="display:inline-block;background:${CONFIG.BRAND_PRIMARY};padding:10px 16px;color:#fff;margin-right:8px;margin-bottom:8px;text-decoration:none;border-radius:999px;font-family:Arial,sans-serif;font-weight:800;font-size:13px;">Leave a Quick Review →</a>
+          </div>
+
+          <p>Keep practicing, and don't hesitate to reach out in the WhatsApp group if you have any questions.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px 22px 22px;font-family:Arial,sans-serif;font-size:12.5px;color:rgba(15,23,42,.70);border-top:1px solid rgba(15,23,42,.10);">
+          Need help? <a href="mailto:${CONFIG.ADMIN_EMAIL}" style="color:${CONFIG.BRAND_INK};font-weight:800;">${CONFIG.ADMIN_EMAIL}</a><br><br>
+          <strong>${CONFIG.FROM_NAME}</strong> • <a href="${CONFIG.WEBSITE_URL}" style="color:${CONFIG.BRAND_INK};">${CONFIG.WEBSITE_URL}</a>
+        </td>
+      </tr>
+    </table>
+    ${context.pixelHtml || ""}
+  </div>`;
+
+  MailApp.sendEmail({
+    to: toEmail, subject: subject, name: CONFIG.FROM_NAME, body: textBody, htmlBody: htmlBody,
+    inlineImages: context.logoBlob ? { logo_image: context.logoBlob } : undefined
+  });
+}
+
 /**
  * 6. TEMPLATE ROUTING MAP
  * Maps template names to their respective functions above.
@@ -1011,7 +1083,8 @@ const EMAIL_TEMPLATES = {
   "assignment": sendAssignmentEmail_,
   "session4_reminder": sendSession4ReminderEmail_,
   "session4_thanks": sendSession4ThankYouEmail_,
-  "session5_reminder": sendSession5ReminderEmail_
+  "session5_reminder": sendSession5ReminderEmail_,
+  "session5_thanks": sendSession5ThankYouEmail_
 };
 
 
@@ -1214,6 +1287,17 @@ function sendSession5ReminderBatch() {
   });
 }
 
+/** RUN THIS: Session 5 Thank You */
+function sendSession5ThankYouBatch() {
+  sendCampaignEmailBatch_({
+    baseColumnName: "Session 5 Thank You", 
+    batchLimit: 100,
+    resend: false,
+    templateName: "session5_thanks",
+    fileIds: { logoId: CONFIG.LOGO_FILE_ID } 
+  });
+}
+
 /** 
  * TEST FUNCTION: Send a test of the Next Meeting Reminder to the Admin Email 
  * Run this to preview how the email looks before sending the batch.
@@ -1365,6 +1449,24 @@ function testSession5Reminder() {
 
   sendSession5ReminderEmail_(adminEmail, "Test Admin User", context);
   Logger.log("Test Session 5 Reminder sent! Check your inbox.");
+}
+
+/** 
+ * TEST FUNCTION: Send a test of the Session 5 Thank You to the Admin Email 
+ */
+function testSession5ThankYou() {
+  const adminEmail = Session.getActiveUser().getEmail() || CONFIG.ADMIN_EMAIL;
+  Logger.log("Sending test Session 5 Thank You email to: " + adminEmail);
+  
+  const context = {};
+  if (CONFIG.LOGO_FILE_ID) {
+    try {
+      context.logoBlob = DriveApp.getFileById(CONFIG.LOGO_FILE_ID).getBlob().setName("logo_image");
+    } catch(e) { Logger.log("Could not load logo: " + e.message); }
+  }
+
+  sendSession5ThankYouEmail_(adminEmail, "Test Admin User", context);
+  Logger.log("Test Session 5 Thank You sent! Check your inbox.");
 }
 
 /** =========================
